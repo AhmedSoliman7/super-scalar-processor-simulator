@@ -25,4 +25,24 @@ public class MemoryHandler {
 				caches[i] = new Cache(caches[i + 1]);
 		}
 	}
+	
+	public ReturnPair<Short> read(short address) {
+		return dataCaches[0].fetch(address);
+	}
+	
+	public short write(short address, short value) {
+		return dataCaches[0].write(address, value);
+	}
+	
+	public Cache[] getInstructionCaches() {
+		return instructionCaches;
+	}
+
+	public Cache[] getDataCaches() {
+		return dataCaches;
+	}
+
+	public MainMemory getMainMemory() {
+		return mainMemory;
+	}
 }

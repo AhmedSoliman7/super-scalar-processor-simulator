@@ -27,14 +27,12 @@ public class CacheSet {
 		return -1;
 	}
 	
-	public int cacheBlock(CacheBlock block) {
+	public int targetBlockIndex() {
 		if(lastFreeBlock < numberOfBlocks) {
-			blocks[lastFreeBlock] = block;
 			return lastFreeBlock++;
 		}
 		
 		short LRUi = LRUBlockIndex();
-		blocks[LRUi] = block;
 		return LRUi;
 	}
 	

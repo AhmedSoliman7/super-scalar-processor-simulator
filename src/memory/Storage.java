@@ -1,8 +1,16 @@
 package memory;
 
 public abstract class Storage {
-	int accessTime;
+	short accessTime;
 	
-	public abstract short fetch(short address);
-	public abstract void write(short address, short value);
+	public abstract ReturnPair<Short> fetch(short address);
+	public abstract short write(short address, short value);
+	
+	public short getAccessTime() {
+		return accessTime;
+	}
+	
+	public void setAccessTime(short accessTime) {
+		this.accessTime = accessTime;
+	}
 }
