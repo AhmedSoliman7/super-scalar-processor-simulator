@@ -33,6 +33,17 @@ public class CacheSet {
 			return;
 		}
 		
-		// LRU
+		short LRUi = LRUBlockIndex();
+		blocks[LRUi] = block;
+	}
+	
+	private short LRUBlockIndex() {
+		short LRUi = 0;
+		
+		for(short i = 1; i < numberOfBlocks; i++)
+			if(blocks[i].LRUCounter < blocks[LRUi].LRUCounter)
+				LRUi = i;
+		
+		return LRUi;
 	}
 }

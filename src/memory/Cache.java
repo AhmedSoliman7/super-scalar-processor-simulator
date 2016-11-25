@@ -48,10 +48,10 @@ public class Cache extends Storage{
 		
 		CacheBlock newBlock;
 		if(this.writingPolicy == WritingPolicy.WRITE_BACK) {
-			newBlock = new WriteBackCacheBlock(this.blockSize, tag, set.LRUCounter);
+			newBlock = new WriteBackCacheBlock(this.blockSize, tag, set.LRUCounter++);
 		}
 		else {
-			newBlock = new WriteThroughCacheBlock(this.blockSize, tag, set.LRUCounter);
+			newBlock = new WriteThroughCacheBlock(this.blockSize, tag, set.LRUCounter++);
 		}
 		
 		for(short i = startAddress; i <= endAdress; i++) {
