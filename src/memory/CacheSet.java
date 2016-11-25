@@ -2,6 +2,7 @@ package memory;
 
 public class CacheSet {
 	CacheBlock[] blocks;
+
 	int LRUCounter;
 	int lastFreeBlock;
 	int numberOfBlocks;
@@ -44,5 +45,9 @@ public class CacheSet {
 				LRUi = i;
 		
 		return LRUi;
+	}
+	
+	public CacheBlock[] getBlocks() {
+		return blocks;
 	}
 }
