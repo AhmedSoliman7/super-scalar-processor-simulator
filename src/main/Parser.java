@@ -54,7 +54,7 @@ public class Parser {
 	}
 	
 	private static short getOpcode(Short instruction) {
-		return (short) (instruction >> 13);
+		return (short) ((instruction >> 13) & 7);
 	}
 	
 	private short parseInstruction(String[] assembly) {
@@ -74,7 +74,7 @@ public class Parser {
 			short regB = registerMap.get(assembly[2]);
 			short imm = Short.parseShort(assembly[3]);
 			
-			code |= (regA << 10) | (regB << 7) | imm;
+			code |= (regA << 10) | (regB << 7) | (imm & ((1 << 7) - 1));
 		}
 		else {
 			short regA = registerMap.get(assembly[1]);
@@ -83,7 +83,7 @@ public class Parser {
 			if(opcode == 5) {
 				short imm = Short.parseShort(assembly[2]);
 				
-				code |= (imm << 3);
+				code |= ((imm & ((1 << 7) - 1)) << 3);
 			}
 			else if(opcode == 6) {
 				short regB = registerMap.get(assembly[2]);
@@ -91,7 +91,7 @@ public class Parser {
 			}
 		}
 		
-		return 0;
+		return code;
 	}
 	
 	private static String[] filterTokens(String[] in)
