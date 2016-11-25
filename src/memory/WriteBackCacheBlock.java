@@ -6,17 +6,4 @@ public class WriteBackCacheBlock extends CacheBlock{
 	}
 
 	boolean dirty;
-	
-	@Override
-	public void writeToMemory() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateValue(short address, short value) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

@@ -13,28 +13,29 @@ public class CacheSet {
 		lastFreeBlock = 0;
 	}
 
-	public Short search(short tag, short offset) {
-		for(int i = 0; i < this.blocks.length; i++) {
+	public short search(short tag, short offset) {
+		for(short i = 0; i < this.blocks.length; i++) {
 			if(this.blocks[i] == null){
 				break;
 			}
 
 			if(this.blocks[i].tag == tag) {
-				return this.blocks[i].data[offset];
+				return i;
 			}
 		}
 		
-		return null;
+		return -1;
 	}
 	
-	public void cacheBlock(CacheBlock block) {
+	public int cacheBlock(CacheBlock block) {
 		if(lastFreeBlock < numberOfBlocks) {
-			blocks[lastFreeBlock++] = block;
-			return;
+			blocks[lastFreeBlock] = block;
+			return lastFreeBlock++;
 		}
 		
 		short LRUi = LRUBlockIndex();
 		blocks[LRUi] = block;
+		return LRUi;
 	}
 	
 	private short LRUBlockIndex() {
