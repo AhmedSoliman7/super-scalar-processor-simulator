@@ -6,6 +6,7 @@ public class Cache extends Storage {
 	short associativity;
 
 	CacheSet[] sets;
+
 	WritingPolicy writingPolicy;
 	Storage nextLevel;
 
@@ -161,12 +162,32 @@ public class Cache extends Storage {
 		}
 		
 		if(this.writingPolicy == WritingPolicy.WRITE_THROUGH) {
-			this.nextLevel.write(address, value);
+			clockCycles += this.nextLevel.write(address, value);
 		}
 		else {
 			((WriteBackCacheBlock) set.blocks[blockIndex]).dirty = true;
 		}
 		
 		return clockCycles;
+	}
+	
+	public CacheSet[] getSets() {
+		return sets;
+	}
+	
+	public int getReadHits() {
+		return readHits;
+	}
+
+	public int getWriteHits() {
+		return writeHits;
+	}
+
+	public int getReadMisses() {
+		return readMisses;
+	}
+
+	public int getWriteMisses() {
+		return writeMisses;
 	}
 }
