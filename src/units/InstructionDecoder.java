@@ -2,7 +2,6 @@ package units;
 
 public class InstructionDecoder {
 
-	//TODO update parser
 	public static byte getRS(short instruction){
 		short opcode = getOpcode(instruction);
 		if(opcode == 0)
@@ -28,5 +27,9 @@ public class InstructionDecoder {
 	
 	public static byte getOpcode(short instruction){
 		return (byte) (instruction >> 13 & 7);
+	}
+	
+	public static byte getRegOp(short instruction){
+		return (byte) (instruction >> 9 & 15);
 	}
 }

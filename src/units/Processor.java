@@ -13,6 +13,7 @@ public class Processor {
 	 * fetch, issue, write, commit => one cycle each. Execute N cycles
 	 * Unconditional => predicated as taken
 	 * Conditional => taken for +ve offset and not taken otherwise
+	 * Handle simultaenously running instructions
 	 * 
 	 * Missing
 	 * =======
@@ -63,7 +64,7 @@ public class Processor {
 			ReservationStationType currentType = ReservationStationType.getType(currentInstruction);
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
-					reservationStations[firstReservationStation[typeIndex] + j].issue(currentInstruction, getROB().getNextEntryIndex());
+					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().getNextEntryIndex());
 					instructionQueue.poll();
 					continue mainLoop;
 				}

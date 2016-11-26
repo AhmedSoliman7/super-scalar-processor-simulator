@@ -3,9 +3,9 @@ package units;
 public class ReorderBuffer {
 
 	private ReorderBufferEntry[] entries;
-	private int maxSize, head, tail;
+	private short maxSize, head, tail;
 
-	public ReorderBuffer(int maxSize) {
+	public ReorderBuffer(short maxSize) {
 		this.maxSize = maxSize;
 		entries = new ReorderBufferEntry[maxSize];
 		tail = -1;
@@ -19,8 +19,8 @@ public class ReorderBuffer {
 		return (tail + 1) % maxSize == head;
 	}
 	
-	public int getNextEntryIndex(){
-		return (tail + 1) % maxSize;
+	public short getNextEntryIndex(){
+		return (short) ((tail + 1) % maxSize);
 	}
 	
 	public ReorderBufferEntry getEntry(int index){

@@ -85,4 +85,8 @@ public abstract class ReservationStation {
 	public abstract void executeInstruction();
 
 	public abstract void writeInstruction();
+	
+	public boolean isBusy(){
+		return busy;
+	}
 }
