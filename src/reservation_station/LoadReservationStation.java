@@ -34,7 +34,7 @@ public class LoadReservationStation extends ReservationStation {
 	public void executeInstruction() {
 		
 		short newAddress = (short) (this.getVj() + this.getAddress());
-		if(this.getTimerTillNextState() == 0 && this.getQj() == 0 && !ProcessorBuilder.getProcessor().getROB().findMatchingStoreAddress(newAddress, this.getDestROB())){
+		if(this.getTimerTillNextState() == 0 && this.getQj() == READY && !ProcessorBuilder.getProcessor().getROB().findMatchingStoreAddress(newAddress, this.getDestROB())){
 			this.setAddress(newAddress);
 
 			ReturnPair<Short> readPair = ProcessorBuilder.getProcessor()

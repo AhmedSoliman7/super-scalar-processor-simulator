@@ -6,7 +6,7 @@ import units.ReorderBufferEntry;
 
 public abstract class ReservationStation {
 
-	private static final int VALID = -1;
+	protected static final short VALID = -1, READY = -1;
 	private short Qj, Qk, Vj, Vk, destROB, address;
 	private boolean busy;
 	private ReservationStation tempRS;
@@ -113,7 +113,7 @@ public abstract class ReservationStation {
 			tempRS.setQj(value);
 			return;
 		}
-		Qj = 0;
+		Qj = value;
 	}
 	
 	public void setQk(short value) {
@@ -121,7 +121,7 @@ public abstract class ReservationStation {
 			tempRS.setQk(value);
 			return;
 		}
-		Qk = 0;
+		Qk = value;
 	}
 	
 	public short getQk(){
@@ -138,7 +138,7 @@ public abstract class ReservationStation {
 			return;
 		}
 		Vj = value;
-		Qj = 0;
+		Qj = READY;
 	}
 	
 	public short getVk() {
@@ -151,7 +151,7 @@ public abstract class ReservationStation {
 			return;
 		}
 		Vk = value;
-		Qk = 0;
+		Qk = READY;
 	}
 	
 	public short getDestROB() {

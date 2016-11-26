@@ -22,7 +22,7 @@ public class StoreReservationStation extends ReservationStation {
 	@Override
 	public void executeInstruction() {
 		short newAddress = (short) (this.getVj() + this.getAddress());
-		if(this.getQj() == 0){
+		if(this.getQj() == READY){
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination(newAddress);
 		}
 		
@@ -35,7 +35,7 @@ public class StoreReservationStation extends ReservationStation {
 
 	@Override
 	public void writeInstruction() {
-		if(this.getQk() == 0){
+		if(this.getQk() == READY){
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(this.getVk());
 			
 			this.setState(ReservationStationState.COMMIT);
