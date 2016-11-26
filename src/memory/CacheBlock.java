@@ -2,6 +2,7 @@ package memory;
 
 public abstract class CacheBlock {
 	short[] data;
+
 	short tag;
 	int LRUCounter;
 	
@@ -9,5 +10,9 @@ public abstract class CacheBlock {
 		data = new short[blockSize];
 		this.tag = tag;
 		this.LRUCounter = LRUCounter;
+	}
+	
+	public short[] getData() {
+		return data;
 	}
 }
