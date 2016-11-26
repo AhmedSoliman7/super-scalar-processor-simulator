@@ -148,13 +148,35 @@ public class ProcessorTests {
 				0,
 				processor.getRegisterFile().getRegisterStatus((byte) 6));
 		
-	
-		for(int i = 0; i < 6; i++)
-			processor.runClockCycle();
+		processor.runClockCycle();
+		
+		// TODO I1 starting exec, I2 issuing
+		
+		processor.runClockCycle();
+		
+		// TODO I1 exec, I2 exec
+		
+		processor.runClockCycle();
+		
+		// TODO I1 exec, I2 exec
+		
+		processor.runClockCycle();
+		
+		// TODO I1 exec, I2 exec
+		
+		processor.runClockCycle();
+		
+		// TODO I1 exec, I2 exec
+		
+		processor.runClockCycle();
 		
 		assertEquals(
 				ReservationStationState.WRITE,
 				lrs.getState());
+		
+		assertEquals(
+				ReservationStationState.EXEC,
+				processor.getReservationStations()[1].getState());
 		
 		assertEquals(
 				1,
@@ -165,6 +187,10 @@ public class ProcessorTests {
 		assertEquals(
 				ReservationStationState.COMMIT,
 				lrs.getState());
+		
+		assertEquals(
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[1].getState());
 		
 		assertEquals(
 				false,
@@ -189,12 +215,30 @@ public class ProcessorTests {
 		processor.runClockCycle();
 		
 		assertEquals(
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[1].getState());
+		
+		assertEquals(
 				2,
 				processor.getRegisterFile().getRegisterValue((byte) 6));
 		
 		assertEquals(
 				-1,
 				processor.getRegisterFile().getRegisterStatus((byte) 6));
+		
+		processor.runClockCycle();
+		
+		assertEquals(
+				3,
+				processor.getRegisterFile().getRegisterValue((byte) 2));
+		
+		assertEquals(
+				-1,
+				processor.getRegisterFile().getRegisterStatus((byte) 2));
+		
+		assertEquals(
+				2,
+				processor.getRegisterFile().getRegisterStatus((byte) 3));
 		
 		TestsInitializer.clean();
 	}
