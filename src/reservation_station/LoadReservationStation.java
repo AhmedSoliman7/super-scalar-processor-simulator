@@ -1,11 +1,12 @@
 package reservation_station;
 
 import main.ProcessorBuilder;
+import memory.ReturnPair;
 import units.InstructionDecoder;
-import units.Processor;
 
 public class LoadReservationStation extends ReservationStation {
 	private static int cycles;
+	private ReturnPair<Short> fetchedPair;
 	
 	protected LoadReservationStation(boolean isOriginal) {
 		if(isOriginal)
@@ -31,19 +32,40 @@ public class LoadReservationStation extends ReservationStation {
 
 	@Override
 	public void executeInstruction() {
+		
 		short newAddress = (short) (this.getVj() + this.getAddress());
-		if(this.getQj() == 0 && !ProcessorBuilder.getProcessor().getROB().findMatchingStoreAddress(newAddress, this.getDestROB())){
+		if(this.getTimerTillNextState() == 0 && this.getQj() == 0 && !ProcessorBuilder.getProcessor().getROB().findMatchingStoreAddress(newAddress, this.getDestROB())){
 			this.setAddress(newAddress);
-			//TODO: read from memory
-			this.clearBusy();
+
+			ReturnPair<Short> readPair = ProcessorBuilder.getProcessor()
+					.getMemoryUnit()
+					.read(newAddress);
+			
+			this.fetchedPair = readPair;
 		}
 		
+		this.incrementTimer();
+		
+		if(readyToWrite()) {
+			this.setState(ReservationStationState.WRITE);
+		}
 	}
+	
+	
 
 	@Override
 	public void writeInstruction() {
 		// TODO CDB available
-		
+		ProcessorBuilder.getProcessor()
+		.getROB()
+		.getEntry(this.getDestROB())
+		.setValue(fetchedPair.value);
+		this.clearBusy();
+	}
+
+	@Override
+	boolean readyToWrite() {
+		return this.getTimerTillNextState() == LoadReservationStation.cycles + this.fetchedPair.clockCycles;
 	}
 
 }

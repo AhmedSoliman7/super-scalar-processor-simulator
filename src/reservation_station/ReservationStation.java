@@ -31,6 +31,8 @@ public abstract class ReservationStation {
 		this.setDestROB(destROB);
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setInstructionType(InstructionDecoder.getOpcode(instruction));
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setReady(false);
+		this.state = ReservationStationState.EXEC;
+		this.timerTillNextState = 0;
 	}
 
 	public void issueInstructionSourceRegister1(byte rs){
@@ -65,6 +67,8 @@ public abstract class ReservationStation {
 		}
 	}
 
+	abstract boolean readyToWrite();
+	
 	public abstract void executeInstruction();
 
 	public abstract void writeInstruction();
@@ -175,5 +179,21 @@ public abstract class ReservationStation {
 		destROB = tempRS.destROB;
 		address = tempRS.address;
 		busy = tempRS.busy;
+	}
+	
+	void incrementTimer() {
+		this.timerTillNextState++;
+	}
+	
+	public ReservationStationState getState() {
+		return state;
+	}
+
+	void setState(ReservationStationState state) {
+		this.state = state;
+	}
+
+	int getTimerTillNextState() {
+		return timerTillNextState;
 	}
 }

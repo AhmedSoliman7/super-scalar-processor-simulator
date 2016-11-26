@@ -8,11 +8,18 @@ public class AddReservationStation extends IntOpernationReservationStation {
 			this.setTempReservationStation(new AddReservationStation(false));
 		}
 	}
-
-	public static int getCycles() {
-		return cycles;
+	
+	
+	@Override
+	short calculate() {
+		return (short) (this.getVj() + this.getVk());
 	}
 
+	@Override
+	boolean readyToWrite() {
+		return this.getTimerTillNextState() == AddReservationStation.cycles;
+	}
+	
 	public static void setCycles(int cycles) {
 		AddReservationStation.cycles = cycles;
 	}

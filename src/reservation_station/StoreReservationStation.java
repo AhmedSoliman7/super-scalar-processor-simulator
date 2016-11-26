@@ -25,6 +25,12 @@ public class StoreReservationStation extends ReservationStation {
 		if(this.getQj() == 0){
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination(newAddress);
 		}
+		
+		this.incrementTimer();
+		
+		if(this.readyToWrite()) {
+			this.setState(ReservationStationState.WRITE);
+		}
 	}
 
 	@Override
@@ -41,5 +47,10 @@ public class StoreReservationStation extends ReservationStation {
 
 	public static void setCycles(int cycles) {
 		StoreReservationStation.cycles = cycles;
+	}
+	
+	@Override
+	boolean readyToWrite() {
+		return this.getTimerTillNextState() == StoreReservationStation.cycles;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Queue;
 import memory.MemoryHandler;
 import memory.ReturnPair;
 import reservation_station.ReservationStation;
+import reservation_station.ReservationStationState;
 import reservation_station.ReservationStationType;
 
 public class Processor {
@@ -23,7 +24,6 @@ public class Processor {
 	 * 2. Write result instructions
 	 * 3. Commit instructions
 	 */
-	private static final byte VALID = -1;
 	private ReservationStation[] reservationStations;	
 	private ReorderBuffer ROB;				
 	private MemoryHandler memoryUnit;
@@ -44,6 +44,9 @@ public class Processor {
 	}
 	
 	public void runClockCycle() {
+		writeResultInstructions();
+		executeInstructions();
+		issueInstructions();
 		fetchInstruction();
 		// TODO rest of this clock cycle
 	}
@@ -98,16 +101,18 @@ public class Processor {
 	}
 
 	private void executeInstructions(){
-		//TODO if instruction finished issuing
 		for(ReservationStation rs: reservationStations){
-			rs.executeInstruction();
+			if(rs.isBusy() && rs.getState() == ReservationStationState.EXEC) {
+				rs.executeInstruction();
+			}
 		}
 	}
 
 	private void writeResultInstructions(){
 		for(ReservationStation rs: reservationStations){
-			//TODO if rs finished execution
-			rs.writeInstruction();
+			if(rs.isBusy() && rs.getState() == ReservationStationState.WRITE) {
+				rs.writeInstruction();
+			}
 		}
 	}
 

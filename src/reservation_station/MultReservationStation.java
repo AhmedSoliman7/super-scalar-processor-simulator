@@ -8,11 +8,18 @@ public class MultReservationStation extends IntOpernationReservationStation {
 			this.setTempReservationStation(new MultReservationStation(false));
 	}
 	
-	public static int getCycles() {
-		return cycles;
+	@Override
+	short calculate() {
+		return (short) (this.getVj() * this.getVk());
 	}
 
 	public static void setCycles(int cycles) {
 		MultReservationStation.cycles = cycles;
 	}
+	
+	@Override
+	boolean readyToWrite() {
+		return this.getTimerTillNextState() == MultReservationStation.cycles;
+	}
+	
 }

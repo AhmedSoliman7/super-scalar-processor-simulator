@@ -17,14 +17,20 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 	@Override
 	public void executeInstruction() {
 		if(this.getQj() == 0 && this.getQk() == 0){
-			//TODO go into execution with cycles, and execute in last cycle
+			this.incrementTimer();
+		}
+		
+		if(readyToWrite()) {
+			this.setState(ReservationStationState.WRITE);
 		}
 	}
-
+	
+	abstract short calculate();
+	
 	@Override
 	public void writeInstruction() {
 		//TODO CDB available -- calculate result
-		short result = 0;
+		short result = calculate();
 		for(ReservationStation rs: ProcessorBuilder.getProcessor().getReservationStations()){
 			if(rs.getQj() == this.getDestROB()){
 				rs.setVj(result);

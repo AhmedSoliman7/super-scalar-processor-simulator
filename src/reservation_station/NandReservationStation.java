@@ -8,11 +8,17 @@ public class NandReservationStation extends IntOpernationReservationStation {
 			this.setTempReservationStation(new NandReservationStation(false));
 	}
 	
-	public static int getCycles() {
-		return cycles;
+	@Override
+	short calculate() {
+		return (short) ~(this.getVj() & this.getVk());
 	}
-
+	
 	public static void setCycles(int cycles) {
 		NandReservationStation.cycles = cycles;
+	}
+	
+	@Override
+	boolean readyToWrite() {
+		return this.getTimerTillNextState() == NandReservationStation.cycles;
 	}
 }
