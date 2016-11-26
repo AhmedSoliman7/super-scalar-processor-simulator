@@ -33,7 +33,7 @@ public abstract class ReservationStation {
 		this.issueInstructionSourceRegister1(InstructionDecoder.getRS(instruction));
 		this.setBusy();
 		this.setDestROB(destROB);
-		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setInstructionType(InstructionDecoder.getOpcode(instruction));
+		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setInstructionType(this.getOperationType());
 		
 		this.state = ReservationStationState.EXEC;
 		this.timerTillNextState = 0;
