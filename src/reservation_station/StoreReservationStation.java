@@ -1,14 +1,13 @@
 package reservation_station;
 
+import main.ProcessorBuilder;
 import units.InstructionDecoder;
-import units.Processor;
 
 public class StoreReservationStation extends ReservationStation {
 
-	protected StoreReservationStation(Processor processor, boolean isOriginal) {
-		super(processor);
+	protected StoreReservationStation(boolean isOriginal) {
 		if(isOriginal)
-			this.setTempReservationStation(new StoreReservationStation(processor, false));
+			this.setTempReservationStation(new StoreReservationStation(false));
 
 	}
 
@@ -21,15 +20,16 @@ public class StoreReservationStation extends ReservationStation {
 
 	@Override
 	public void executeInstruction() {
+		short newAddress = (short) (this.getVj() + this.getAddress());
 		if(this.getQj() == 0){
-			Processor.getProcessor().getROB().getEntry(destROB).setDestination((short) (Vj + address));
+			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination(newAddress);
 		}
 	}
 
 	@Override
 	public void writeInstruction() {
 		if(this.getQk() == 0){
-			processor.getROB().getEntry(destROB).setValue(Vk);
+			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(this.getVk());
 			this.clearBusy();
 		}
 	}

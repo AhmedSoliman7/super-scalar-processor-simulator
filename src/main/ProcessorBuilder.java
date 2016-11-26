@@ -11,7 +11,7 @@ import units.ReorderBuffer;
 
 public class ProcessorBuilder {
 	
-	Processor processor;
+	static Processor processor;
 
 	Scanner sc;
 	
@@ -125,7 +125,7 @@ public class ProcessorBuilder {
 		return processor;	
 	}
 	
-	public Processor getProcessor() {
+	public static Processor getProcessor() {
 		return processor;
 	}
 	

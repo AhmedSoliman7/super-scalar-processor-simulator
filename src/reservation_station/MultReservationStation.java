@@ -1,12 +1,9 @@
 package reservation_station;
 
-import units.Processor;
-
 public class MultReservationStation extends IntOpernationReservationStation {
 
-	protected MultReservationStation(Processor processor, boolean isOriginal) {
-		super(processor);
+	protected MultReservationStation(boolean isOriginal) {
 		if(isOriginal)
-			this.setTempReservationStation(new MultReservationStation(processor, false));
+			this.setTempReservationStation(new MultReservationStation(false));
 	}
 }

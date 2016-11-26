@@ -39,7 +39,6 @@ public class Processor {
 		registerStatus = new short[8];
 		Arrays.fill(registerStatus, (short) VALID);
 		countReservationStation = new int[5];
-
 		prepareReservationStations();
 	}
 
