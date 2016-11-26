@@ -12,8 +12,6 @@ public class ReorderBuffer {
 	public ReorderBuffer(short maxSize) {
 		this.maxSize = maxSize;
 		entries = new ReorderBufferEntry[maxSize];
-		tail = -1;
-		countEntries = 0;
 		writingCounter = -1;
 	}
 
@@ -43,7 +41,7 @@ public class ReorderBuffer {
 			ReorderBufferEntry robHead = entries[head]; 
 			if(robHead.getInstructionType() == 4) {	//branch
 
-				if(robHead.getValue() != 0){			//mispredicted branch
+				if(robHead.getValue() != 0){			//TODO mispredicted branch
 					ProcessorBuilder.getProcessor().clear();
 					
 					//fetch correct branch

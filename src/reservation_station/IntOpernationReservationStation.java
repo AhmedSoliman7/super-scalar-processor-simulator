@@ -16,7 +16,7 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 
 	@Override
 	public void executeInstruction() {
-		if(this.getQj() == 0 && this.getQk() == 0){
+		if(this.getQj() == READY && this.getQk() == READY){
 			this.incrementTimer();
 		}
 		
