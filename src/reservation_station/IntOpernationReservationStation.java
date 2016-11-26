@@ -10,7 +10,7 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 		super.issueInstruction(instruction, destROB);
 		super.issueInstructionSourceRegister2(InstructionDecoder.getRT(instruction));
 		byte rd = InstructionDecoder.getRD(instruction);
-		ProcessorBuilder.getProcessor().setRegisterStatus(rd, destROB);
+		ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus(rd, destROB);
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(rd);
 	}
 

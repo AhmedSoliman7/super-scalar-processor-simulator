@@ -1,16 +1,16 @@
 package units;
 
+import main.ProcessorBuilder;
+
 public class ReorderBuffer {
 
 	private ReorderBufferEntry[] entries;
 	private short maxSize, head, tail;
-	private Processor processor;
 	
-	public ReorderBuffer(short maxSize, Processor processor) {
+	public ReorderBuffer(short maxSize) {
 		this.maxSize = maxSize;
 		entries = new ReorderBufferEntry[maxSize];
 		tail = -1;
-		this.processor = processor;
 	}
 
 	private boolean isEmpty() {
@@ -22,7 +22,10 @@ public class ReorderBuffer {
 	}
 	
 	public short nextEntryIndex(){
-		return (short) ((++tail) % maxSize);
+		tail++;
+		tail %= maxSize;
+		entries[tail] = new ReorderBufferEntry(true);
+		return tail;
 	}
 	
 	public ReorderBufferEntry getEntry(int index){
@@ -34,17 +37,17 @@ public class ReorderBuffer {
 			ReorderBufferEntry robHead = entries[head]; 
 			if(robHead.getInstructionType() == 4) {	//branch
 				if(robHead.getValue() == 0){			//mispredicted branch
-					processor.clear();
+					ProcessorBuilder.getProcessor().clear();
 					//fetch correct branch
 				}
 			}
 			else if(robHead.getInstructionType() == 2) {	//store
-				processor.getMemoryUnit().write(robHead.getDestination(), robHead.getValue());
+				ProcessorBuilder.getProcessor().getMemoryUnit().write(robHead.getDestination(), robHead.getValue());
 			}
 			else {
-				processor.setRegisterValue((byte)robHead.getDestination(), robHead.getValue());
-				if(processor.getRegisterStatus((byte)robHead.getDestination()) == head){
-					processor.setRegisterStatus((byte)robHead.getDestination(), (short)-1);			//VALID register content
+				ProcessorBuilder.getProcessor().getRegisterFile().setRegisterValue((byte)robHead.getDestination(), robHead.getValue());
+				if(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus((byte)robHead.getDestination()) == head){
+					ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus((byte)robHead.getDestination(), (short)-1);//VALID register content
 				}
 			}
 			head++;
@@ -63,5 +66,11 @@ public class ReorderBuffer {
 			}
 		}
 		return false;
+	}
+	
+	public void flush() {
+		for(int i = head; i <= tail; ++i) {
+			entries[i].flush();
+		}
 	}
 }
