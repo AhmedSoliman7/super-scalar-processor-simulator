@@ -11,10 +11,8 @@ import memory.WritingPolicy;
 public class MemoryTests {
 	@Test
 	public void testOneLevelCacheWriteBack() {
-		initHandler(1);
-		handler.getDataCaches()[0].configureCache((short) 8, (short) 2, (short) 1, WritingPolicy.WRITE_BACK);
-		handler.getMainMemory().setAccessTime((short) 5);
-		handler.getDataCaches()[0].setAccessTime((short) 1);
+		initHandler(1, (short) 5);
+		handler.getDataCaches()[0].configureCache((short) 8, (short) 2, (short) 1, WritingPolicy.WRITE_BACK, (short) 1);
 
 		ReturnPair<Short> pair = handler.read((short)0);
 
@@ -164,10 +162,8 @@ public class MemoryTests {
 
 	@Test
 	public void testOneLevelCacheWriteThrough() {
-		initHandler(1);
-		handler.getDataCaches()[0].configureCache((short) 8, (short) 2, (short) 1, WritingPolicy.WRITE_THROUGH);
-		handler.getMainMemory().setAccessTime((short) 5);
-		handler.getDataCaches()[0].setAccessTime((short) 1);
+		initHandler(1, (short) 5);
+		handler.getDataCaches()[0].configureCache((short) 8, (short) 2, (short) 1, WritingPolicy.WRITE_THROUGH, (short) 1);
 
 		ReturnPair<Short> pair = handler.read((short)0);
 		handler.read((short) 2);
@@ -216,14 +212,10 @@ public class MemoryTests {
 
 	@Test
 	public void testMultipleLevelCacheWriteBack() {
-		initHandler(3);
-		handler.getDataCaches()[0].configureCache((short) 4, (short) 2, (short) 1, WritingPolicy.WRITE_BACK);
-		handler.getDataCaches()[1].configureCache((short) 8, (short) 2, (short) 2, WritingPolicy.WRITE_BACK);
-		handler.getDataCaches()[2].configureCache((short) 16, (short) 4, (short) 4, WritingPolicy.WRITE_BACK);
-		handler.getMainMemory().setAccessTime((short) 10);
-		handler.getDataCaches()[0].setAccessTime((short) 1);
-		handler.getDataCaches()[1].setAccessTime((short) 3);
-		handler.getDataCaches()[2].setAccessTime((short) 5);
+		initHandler(3, (short) 10);
+		handler.getDataCaches()[0].configureCache((short) 4, (short) 2, (short) 1, WritingPolicy.WRITE_BACK, (short) 1);
+		handler.getDataCaches()[1].configureCache((short) 8, (short) 2, (short) 2, WritingPolicy.WRITE_BACK, (short) 3);
+		handler.getDataCaches()[2].configureCache((short) 16, (short) 4, (short) 4, WritingPolicy.WRITE_BACK, (short) 5);
 
 		ReturnPair<Short> pair = handler.read((short) 0);
 		assertEquals("Read value should be 1",
@@ -377,14 +369,10 @@ public class MemoryTests {
 
 	@Test
 	public void testMultipleLevelCacheWriteThrough() {
-		initHandler(3);
-		handler.getDataCaches()[0].configureCache((short) 4, (short) 2, (short) 1, WritingPolicy.WRITE_THROUGH);
-		handler.getDataCaches()[1].configureCache((short) 8, (short) 2, (short) 2, WritingPolicy.WRITE_THROUGH);
-		handler.getDataCaches()[2].configureCache((short) 16, (short) 4, (short) 4, WritingPolicy.WRITE_THROUGH);
-		handler.getMainMemory().setAccessTime((short) 10);
-		handler.getDataCaches()[0].setAccessTime((short) 1);
-		handler.getDataCaches()[1].setAccessTime((short) 3);
-		handler.getDataCaches()[2].setAccessTime((short) 5);
+		initHandler(3, (short) 10);
+		handler.getDataCaches()[0].configureCache((short) 4, (short) 2, (short) 1, WritingPolicy.WRITE_THROUGH, (short) 1);
+		handler.getDataCaches()[1].configureCache((short) 8, (short) 2, (short) 2, WritingPolicy.WRITE_THROUGH, (short) 3);
+		handler.getDataCaches()[2].configureCache((short) 16, (short) 4, (short) 4, WritingPolicy.WRITE_THROUGH, (short) 5);
 
 		handler.read((short) 0);
 		handler.read((short) 3);
@@ -483,8 +471,8 @@ public class MemoryTests {
 
 	MemoryHandler handler;
 
-	void initHandler(int numberOfCaches) {
-		handler = new MemoryHandler(numberOfCaches);
+	void initHandler(int numberOfCaches, short accessTime) {
+		handler = new MemoryHandler(numberOfCaches, accessTime);
 
 		for(short i = 1; i <= 20; i++) {
 			handler.getMainMemory().getData()[i - 1] = i;

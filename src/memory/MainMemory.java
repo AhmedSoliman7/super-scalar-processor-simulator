@@ -5,8 +5,9 @@ public class MainMemory extends Storage{
 	
 	short[] data;
 
-	public MainMemory() {
+	public MainMemory(short accessTime) {
 		data = new short[SIZE];
+		this.accessTime = accessTime;
 	}
 	
 	@Override
