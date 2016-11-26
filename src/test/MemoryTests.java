@@ -1,11 +1,12 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import memory.*;
 
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
+
+import memory.MemoryHandler;
+import memory.ReturnPair;
+import memory.WritingPolicy;
 
 public class MemoryTests {
 	@Test

@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ MemoryTests.class })
+@SuiteClasses({ MemoryTests.class, ParserTests.class})
 public class TestsRunner {
 
 }
