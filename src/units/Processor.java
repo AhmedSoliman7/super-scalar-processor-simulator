@@ -46,12 +46,14 @@ public class Processor {
 	}
 	
 	public void runClockCycle() {
+		commitInstructions();
 		writeResultInstructions();
 		executeInstructions();
 		issueInstructions();
 		fetchInstruction();
+		
+		this.flush();
 		timer++;
-		// TODO rest of this clock cycle
 	}
 	
 	public void fetchInstruction() {
@@ -139,6 +141,8 @@ public class Processor {
 		for(ReservationStation rs: reservationStations){
 			rs.clearBusy();
 		}
+		
+		this.flush();
 	}
 	
 	private void flush() {
