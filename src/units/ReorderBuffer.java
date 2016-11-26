@@ -21,8 +21,8 @@ public class ReorderBuffer {
 		return (tail + 1) % maxSize == head;
 	}
 	
-	public short getNextEntryIndex(){
-		return (short) ((tail + 1) % maxSize);
+	public short nextEntryIndex(){
+		return (short) ((++tail) % maxSize);
 	}
 	
 	public ReorderBufferEntry getEntry(int index){
@@ -48,7 +48,6 @@ public class ReorderBuffer {
 				}
 			}
 			head++;
-			
 		}
 	}
 	

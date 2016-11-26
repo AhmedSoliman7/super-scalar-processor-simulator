@@ -86,16 +86,16 @@ public abstract class ReservationStation {
 
 	public abstract void writeInstruction();
 	
-	public void clear() {
-		busy = false;
-	}
-	
 	public boolean isBusy() {
 		return busy;
 	}
 	
 	public void setBusy() { 
 		busy = true;
+	}
+	
+	public void clearBusy() {
+		busy = false;
 	}
 	
 	public void setVj(short value){

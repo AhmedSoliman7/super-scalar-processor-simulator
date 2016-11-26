@@ -39,7 +39,7 @@ public class IntOpernationReservationStation extends ReservationStation {
 			}
 		}
 		processor.getROB().getEntry(destROB).setValue(result);
-		clear();
+		this.clearBusy();
 	}
 
 }

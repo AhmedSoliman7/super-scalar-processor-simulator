@@ -65,7 +65,7 @@ public class Processor {
 			ReservationStationType currentType = ReservationStationType.getType(currentInstruction);
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
-					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().getNextEntryIndex());
+					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().nextEntryIndex());
 					instructionQueue.poll();
 					continue mainLoop;
 				}
@@ -75,6 +75,7 @@ public class Processor {
 	}
 	
 	private void executeInstructions(){
+		//TODO if instruction finished issuing
 		for(ReservationStation rs: reservationStations){
 			rs.executeInstruction();
 		}
@@ -82,6 +83,7 @@ public class Processor {
 	
 	private void writeResultInstructions(){
 		for(ReservationStation rs: reservationStations){
+			//TODO if rs finished execution
 			rs.writeInstruction();
 		}
 	}
@@ -98,10 +100,6 @@ public class Processor {
 		}
 	}
 	
-	/*
-	 * Getters and Setters
-	 * ===================
-	 */
 	public short getRegisterStatus(byte register) {
 		return registerStatus[register];
 	}

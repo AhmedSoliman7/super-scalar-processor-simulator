@@ -24,7 +24,7 @@ public class LoadReservationStation extends ReservationStation {
 		if(Qj == 0 && !processor.getROB().findMatchingStoreAddress((short) (address + Vj), destROB)){
 			address += Vj;
 			//TODO: read from memory
-			clear();
+			this.clearBusy();
 		}
 		
 	}
