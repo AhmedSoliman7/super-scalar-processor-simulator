@@ -82,7 +82,7 @@ public class Processor {
 		reservationStations = new ReservationStation[totalRS];
 		for(int i = 0; i < 5; i++){
 			for(int j = 0; j < countReservationStation[i]; j++){
-				reservationStations[firstReservationStation[i] + j] = ReservationStation.create(ReservationStationType.values()[i], this);
+				reservationStations[firstReservationStation[i] + j] = ReservationStation.create(ReservationStationType.values()[i]);
 			}
 		}	
 	}

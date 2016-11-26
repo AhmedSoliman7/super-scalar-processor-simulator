@@ -1,28 +1,30 @@
 package reservation_station;
 
+import main.ProcessorBuilder;
 import units.InstructionDecoder;
 import units.Processor;
 
 public class LoadReservationStation extends ReservationStation {
 
-	protected LoadReservationStation(Processor processor) {
-		super(processor);
-		// TODO Auto-generated constructor stub
+	protected LoadReservationStation(boolean isOriginal) {
+		if(isOriginal)
+			this.setTempReservationStation(new LoadReservationStation(false));
 	}
 
 	@Override
 	public void issueInstruction(short instruction, short destROB) {
 		super.issueInstruction(instruction, destROB);
-		address = InstructionDecoder.getImmediate(instruction);
+		this.setAddress(InstructionDecoder.getImmediate(instruction));
 		byte rt = InstructionDecoder.getRT(instruction);
-		processor.setRegisterStatus(rt, destROB);
-		processor.getROB().getEntry(destROB).setDestination(rt);
+		ProcessorBuilder.getProcessor().setRegisterStatus(rt, destROB);
+		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(rt);
 	}
 
 	@Override
 	public void executeInstruction() {
-		if(Qj == 0 && !processor.getROB().findMatchingStoreAddress((short) (address + Vj), destROB)){
-			address += Vj;
+		short newAddress = (short) (this.getVj() + this.getAddress());
+		if(this.getQj() == 0 && !ProcessorBuilder.getProcessor().getROB().findMatchingStoreAddress(newAddress, this.getDestROB())){
+			this.setAddress(newAddress);
 			//TODO: read from memory
 			this.clearBusy();
 		}

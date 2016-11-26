@@ -1,28 +1,23 @@
 package reservation_station;
 
+import main.ProcessorBuilder;
 import units.InstructionDecoder;
-import units.Processor;
 
-public class IntOpernationReservationStation extends ReservationStation {
-
-	protected IntOpernationReservationStation(Processor processor) {
-		super(processor);
-		// TODO Auto-generated constructor stub
-	}
+public abstract class IntOpernationReservationStation extends ReservationStation {
 
 	@Override
 	public void issueInstruction(short instruction, short destROB) {
 		super.issueInstruction(instruction, destROB);
 		super.issueInstructionSourceRegister2(InstructionDecoder.getRT(instruction));
 		byte rd = InstructionDecoder.getRD(instruction);
-		processor.setRegisterStatus(rd, destROB);
-		processor.getROB().getEntry(destROB).setDestination(rd);
+		ProcessorBuilder.getProcessor().setRegisterStatus(rd, destROB);
+		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(rd);
 	}
 
 	@Override
 	public void executeInstruction() {
-		if(Qj == 0 && Qk == 0){
-			//TODO go into excution with cycles, and execute in last cycle
+		if(this.getQj() == 0 && this.getQk() == 0){
+			//TODO go into execution with cycles, and execute in last cycle
 		}
 	}
 
@@ -30,15 +25,15 @@ public class IntOpernationReservationStation extends ReservationStation {
 	public void writeInstruction() {
 		//TODO CDB available -- calculate result
 		short result = 0;
-		for(ReservationStation rs: processor.getReservationStations()){
-			if(rs.getQj() == destROB){
+		for(ReservationStation rs: ProcessorBuilder.getProcessor().getReservationStations()){
+			if(rs.getQj() == this.getDestROB()){
 				rs.setVj(result);
 			}
-			if(rs.getQk() == destROB){
+			if(rs.getQk() == this.getDestROB()){
 				rs.setVk(result);
 			}
 		}
-		processor.getROB().getEntry(destROB).setValue(result);
+		ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(result);
 		this.clearBusy();
 	}
 
