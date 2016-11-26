@@ -1,0 +1,12 @@
+Instruction,Opcode,ALU-Op
+ADD,0,0
+SUB,0,1
+NAND,0,2
+MULT,0,3
+LW,1,
+SW,2,
+ADDI,3,
+BEQ,4,
+JMP,5,
+JALR,6,
+RET,7,
