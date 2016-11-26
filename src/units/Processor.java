@@ -1,5 +1,6 @@
 package units;
 
+import java.util.Arrays;
 import java.util.Queue;
 
 import memory.MemoryHandler;
@@ -13,6 +14,7 @@ public class Processor {
 	 * fetch, issue, write, commit => one cycle each. Execute N cycles
 	 * Unconditional => predicated as taken
 	 * Conditional => taken for +ve offset and not taken otherwise
+	 * Handle simultaenously running instructions
 	 * 
 	 * Missing
 	 * =======
@@ -21,7 +23,7 @@ public class Processor {
 	 * 2. Write result instructions
 	 * 3. Commit instructions
 	 */
-	private static final int VALID = -1;
+	private static final byte VALID = -1;
 	private ReservationStation[] reservationStations;	
 	private ReorderBuffer ROB;							//TODO initialize with size from input
 	private short[] registerFile;						//TODO initialize with size 8
@@ -63,7 +65,7 @@ public class Processor {
 			ReservationStationType currentType = ReservationStationType.getType(currentInstruction);
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
-					reservationStations[firstReservationStation[typeIndex] + j].issue(currentInstruction, getROB().getNextEntryIndex());
+					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().nextEntryIndex());
 					instructionQueue.poll();
 					continue mainLoop;
 				}
@@ -73,27 +75,37 @@ public class Processor {
 	}
 	
 	private void executeInstructions(){
-		//TODO loop on reservation stations and execute possible ones. 
+		//TODO if instruction finished issuing
+		for(ReservationStation rs: reservationStations){
+			rs.executeInstruction();
+		}
 	}
 	
 	private void writeResultInstructions(){
-		//TODO loop on reservation stations and write result of possible ones
+		for(ReservationStation rs: reservationStations){
+			//TODO if rs finished execution
+			rs.writeInstruction();
+		}
 	}
 	
 	private void commitInstructions(){
-		//TODO commit head of ROB if possible
+		ROB.commit();
 	}
 	
-	/*
-	 * Getters and Setters
-	 * ===================
-	 */
+	public void clear() {
+		Arrays.fill(registerStatus, VALID);
+		ROB.clear();
+		for(ReservationStation rs: reservationStations){
+			rs.clear();
+		}
+	}
+	
 	public short getRegisterStatus(byte register) {
 		return registerStatus[register];
 	}
 
 	public void setRegisterStatus(byte register, short value) {
-		this.registerStatus[register] = value;
+		registerStatus[register] = value;
 	}
 
 	public ReorderBuffer getROB() {
@@ -102,5 +114,17 @@ public class Processor {
 	
 	public short getRegisterValue(byte register) {
 		return registerFile[register];
+	}
+	
+	public void setRegisterValue(byte register, short value) {
+		registerFile[register] = value;
+	}
+	
+	public ReservationStation[] getReservationStations(){
+		return reservationStations;
+	}
+	
+	public MemoryHandler getMemoryUnit(){
+		return memoryUnit;
 	}
 }

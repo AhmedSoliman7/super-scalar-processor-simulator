@@ -8,6 +8,7 @@ public class StoreReservationStation extends ReservationStation {
 	protected StoreReservationStation(Processor processor) {
 		super(processor);
 		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
@@ -19,14 +20,16 @@ public class StoreReservationStation extends ReservationStation {
 
 	@Override
 	public void executeInstruction() {
-		// TODO Auto-generated method stub
-		
+		if(Qj == 0){
+			processor.getROB().getEntry(destROB).setDestination((short) (Vj + address));
+		}
 	}
 
 	@Override
 	public void writeInstruction() {
-		// TODO Auto-generated method stub
-		
+		if(Qk == 0){
+			processor.getROB().getEntry(destROB).setValue(Vk);
+			this.clearBusy();
+		}
 	}
-
 }

@@ -18,6 +18,10 @@ public class ReorderBufferEntry {
 		return value;
 	}
 	
+	public void setValue(short value){
+		this.value = value;
+	}
+	
 	public void setType(byte type){
 		instructionType = type;
 	}
@@ -26,4 +30,14 @@ public class ReorderBufferEntry {
 		destintation = value;
 	}
 	
+	/**
+	 * @return opcode of the instruction in the current reorder buffer entry
+	 */
+	public byte getInstructionType(){
+		return instructionType;
+	}
+	
+	public short getDestination(){
+		return destintation;
+	}
 }
