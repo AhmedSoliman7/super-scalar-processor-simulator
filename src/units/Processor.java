@@ -35,12 +35,14 @@ public class Processor {
 	private int[] countReservationStation;
 	private short PC;
 	private InstructionInFetch instructionInFetch;
+	private int timer;
 
 	public Processor(){
 		countReservationStation = new int[5];
 		registerFile = new RegisterFile(8, true);
 		instructionQueue = new LinkedList<Short>();
 		prepareReservationStations();
+		timer = 0;
 	}
 	
 	public void runClockCycle() {
@@ -48,6 +50,7 @@ public class Processor {
 		executeInstructions();
 		issueInstructions();
 		fetchInstruction();
+		timer++;
 		// TODO rest of this clock cycle
 	}
 	
@@ -93,6 +96,8 @@ public class Processor {
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
 					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().nextEntryIndex());
 					instructionQueue.poll();
+					reservationStations[firstReservationStation[typeIndex] + j].setStartTime(timer);
+					
 					continue mainLoop;
 				}
 			}
@@ -109,10 +114,17 @@ public class Processor {
 	}
 
 	private void writeResultInstructions(){
+		ReservationStation bestRS = null;
 		for(ReservationStation rs: reservationStations){
 			if(rs.isBusy() && rs.getState() == ReservationStationState.WRITE) {
-				rs.writeInstruction();
+				if(bestRS == null || rs.getStartTime() < bestRS.getStartTime()) {
+					bestRS = rs;
+				}
 			}
+		}
+		
+		if(bestRS != null) {
+			bestRS.writeInstruction();
 		}
 	}
 

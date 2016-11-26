@@ -29,17 +29,11 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 	
 	@Override
 	public void writeInstruction() {
-		//TODO CDB available -- calculate result
 		short result = calculate();
-		for(ReservationStation rs: ProcessorBuilder.getProcessor().getReservationStations()){
-			if(rs.getQj() == this.getDestROB()){
-				rs.setVj(result);
-			}
-			if(rs.getQk() == this.getDestROB()){
-				rs.setVk(result);
-			}
-		}
+		passToOtherReservationStations(result);
 		ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(result);
+		
+		this.setState(ReservationStationState.COMMIT);
 		this.clearBusy();
 	}
 

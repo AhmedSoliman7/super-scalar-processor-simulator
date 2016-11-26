@@ -55,11 +55,14 @@ public class LoadReservationStation extends ReservationStation {
 
 	@Override
 	public void writeInstruction() {
-		// TODO CDB available
 		ProcessorBuilder.getProcessor()
 		.getROB()
 		.getEntry(this.getDestROB())
 		.setValue(fetchedPair.value);
+		
+		passToOtherReservationStations(fetchedPair.value);
+		
+		this.setState(ReservationStationState.COMMIT);
 		this.clearBusy();
 	}
 

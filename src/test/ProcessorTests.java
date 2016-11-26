@@ -18,37 +18,36 @@ public class ProcessorTests {
 		initAssembly();
 		initUserInput();
 
-		ProcessorBuilder builder = new ProcessorBuilder();
-		builder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
 		
-		builder.getProcessor().fetchInstruction();
+		ProcessorBuilder.getProcessor().fetchInstruction();
 		
 		for(int i = 0; i < 56; i++)
-			builder.getProcessor().getInstructionInFetch().decrementCycles();
+			ProcessorBuilder.getProcessor().getInstructionInFetch().decrementCycles();
 		
 		assertEquals(
 				"Instruction should be ready after 56 clock cycles.",
 				true,
-				builder.getProcessor().getInstructionInFetch().isReady());
+				ProcessorBuilder.getProcessor().getInstructionInFetch().isReady());
 		
 		assertEquals(
 				"Instruction queue should be still empty.",
 				0,
-				builder.getProcessor().getInstructionQueue().size());
+				ProcessorBuilder.getProcessor().getInstructionQueue().size());
 		
-		builder.getProcessor().fetchInstruction();
+		ProcessorBuilder.getProcessor().fetchInstruction();
 		
 		assertEquals(
 				"Instruction queue should have one fetched instruction.",
 				1,
-				builder.getProcessor().getInstructionQueue().size());
+				ProcessorBuilder.getProcessor().getInstructionQueue().size());
 		
-		builder.getProcessor().fetchInstruction();
+		ProcessorBuilder.getProcessor().fetchInstruction();
 		
 		assertEquals(
 				"Instruction queue should have two fetched instructions because the second one was cached in L1.",
 				2,
-				builder.getProcessor().getInstructionQueue().size());
+				ProcessorBuilder.getProcessor().getInstructionQueue().size());
 		
 		clean();
 	}

@@ -37,6 +37,8 @@ public class StoreReservationStation extends ReservationStation {
 	public void writeInstruction() {
 		if(this.getQk() == 0){
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(this.getVk());
+			
+			this.setState(ReservationStationState.COMMIT);
 			this.clearBusy();
 		}
 	}

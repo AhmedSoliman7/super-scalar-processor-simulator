@@ -12,7 +12,8 @@ public abstract class ReservationStation {
 	private ReservationStation tempRS;
 	private ReservationStationState state;
 	private int timerTillNextState;
-	
+	private int startTime;
+
 	public static ReservationStation create(ReservationStationType reservationStationType) { 
 		switch(reservationStationType) {
 		case LOAD : return new LoadReservationStation(true);
@@ -30,7 +31,7 @@ public abstract class ReservationStation {
 		setBusy();
 		this.setDestROB(destROB);
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setInstructionType(InstructionDecoder.getOpcode(instruction));
-		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setReady(false);
+		
 		this.state = ReservationStationState.EXEC;
 		this.timerTillNextState = 0;
 	}
@@ -64,6 +65,17 @@ public abstract class ReservationStation {
 		}
 		else{
 			this.setVk(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterValue(rt));
+		}
+	}
+	
+	public void passToOtherReservationStations(short result) {
+		for(ReservationStation rs: ProcessorBuilder.getProcessor().getReservationStations()){
+			if(rs.getQj() == this.getDestROB()){
+				rs.setVj(result);
+			}
+			if(rs.getQk() == this.getDestROB()){
+				rs.setVk(result);
+			}
 		}
 	}
 
@@ -195,5 +207,13 @@ public abstract class ReservationStation {
 
 	int getTimerTillNextState() {
 		return timerTillNextState;
+	}
+	
+	public int getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(int startTime) {
+		this.startTime = startTime;
 	}
 }
