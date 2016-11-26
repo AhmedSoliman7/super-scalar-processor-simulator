@@ -5,12 +5,23 @@ public class ReorderBufferEntry {
 	private byte instructionType;
 	private short value, destintation;
 	private boolean ready;
+	private ReorderBufferEntry tempROBEntry;
+	
+	public ReorderBufferEntry(boolean isOriginal) {
+		if(isOriginal) {
+			tempROBEntry = new ReorderBufferEntry(false);
+		}
+	}
 	
 	public boolean isReady(){
 		return ready;
 	}
 	
 	public void setReady(boolean value){
+		if(tempROBEntry != null) {
+			tempROBEntry.setReady(value);
+			return;
+		}
 		ready = value;
 	}
 	
@@ -20,14 +31,10 @@ public class ReorderBufferEntry {
 	
 	public void setValue(short value){
 		this.value = value;
-	}
-	
-	public void setType(byte type){
-		instructionType = type;
-	}
-	
-	public void setDestination(short value){
-		destintation = value;
+		if(tempROBEntry != null) {
+			tempROBEntry.setValue(value);
+			return;
+		}
 	}
 	
 	/**
@@ -37,7 +44,27 @@ public class ReorderBufferEntry {
 		return instructionType;
 	}
 	
+	public void setInstructionType(byte type) {
+		instructionType = type;
+	}
+	
+	
 	public short getDestination(){
 		return destintation;
+	}
+	
+	public void setDestination(short value){
+		if(tempROBEntry != null) {
+			tempROBEntry.setValue(value);
+			return;
+		}
+		destintation = value;
+	}
+	
+	public void flush() {
+		instructionType = tempROBEntry.instructionType;
+		destintation = tempROBEntry.destintation;
+		value = tempROBEntry.value;
+		ready = tempROBEntry.ready;
 	}
 }

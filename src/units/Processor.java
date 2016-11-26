@@ -1,6 +1,5 @@
 package units;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -26,10 +25,9 @@ public class Processor {
 	 */
 	private static final byte VALID = -1;
 	private ReservationStation[] reservationStations;	
-	private ReorderBuffer ROB;							
-	private short[] registerFile;						
-	private short[] registerStatus;						
-	private MemoryHandler memoryUnit;					
+	private ReorderBuffer ROB;				
+	private MemoryHandler memoryUnit;
+	private RegisterFile registerFile;
 	private Queue<Short> instructionQueue;				
 	private int instructionQueueMaxSize;
 	private int pipelineWidth;							
@@ -39,12 +37,9 @@ public class Processor {
 	private InstructionInFetch instructionInFetch;
 
 	public Processor(){
-		registerFile = new short[8];
-		registerStatus = new short[8];
-		Arrays.fill(registerStatus, (short) VALID);
 		countReservationStation = new int[5];
+		registerFile = new RegisterFile(8, true);
 		instructionQueue = new LinkedList<Short>();
-
 		prepareReservationStations();
 	}
 	
@@ -121,28 +116,29 @@ public class Processor {
 	}
 
 	public void clear() {
-		Arrays.fill(registerStatus, VALID);
+		registerFile.clearStatus();
+		
 		ROB.clear();
 		for(ReservationStation rs: reservationStations){
 			rs.clearBusy();
 		}
 	}
-
-	public short getRegisterStatus(byte register) {
-		return registerStatus[register];
+	
+	private void flush() {
+		registerFile.flush();
+		ROB.flush();
+		for(ReservationStation rs: reservationStations)
+			rs.flush();
 	}
-
-	public void setRegisterStatus(byte register, short value) {
-		registerStatus[register] = value;
-	}
-
+	
 	public ReorderBuffer getROB() {
 		return ROB;
 	}
-
-	public short getRegisterValue(byte register) {
-		return registerFile[register];
+	
+	public RegisterFile getRegisterFile() {
+		return registerFile;
 	}
+
 
 	public MemoryHandler getMemoryUnit() {
 		return this.memoryUnit;
@@ -166,10 +162,6 @@ public class Processor {
 
 	public void setPipelineWidth(int pipelineWidth) {
 		this.pipelineWidth = pipelineWidth;
-	}
-
-	public void setRegisterValue(byte register, short value) {
-		registerFile[register] = value;
 	}
 
 	public ReservationStation[] getReservationStations(){
