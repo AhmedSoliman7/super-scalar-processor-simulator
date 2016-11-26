@@ -4,6 +4,7 @@ import main.ProcessorBuilder;
 
 public class ReorderBuffer {
 
+	private static final short VALID = -1;
 	private ReorderBufferEntry[] entries;
 	private short maxSize, head, tail;
 	private int countEntries;
@@ -39,15 +40,15 @@ public class ReorderBuffer {
 	public void commit() {			//TODO handle JMP, JALR, RET
 		if(!isEmpty() && entries[head].isReady()){
 			ReorderBufferEntry robHead = entries[head]; 
-			if(robHead.getInstructionType() == InstructionType.BEQ) {	//branch
+			if(robHead.getInstructionType() == InstructionType.BEQ) {
 
-				if(robHead.getValue() != 0){			//TODO check mispredicted branch
+				if(robHead.getValue() == 0){			// misprediction TODO complete clearing
 					ProcessorBuilder.getProcessor().clear();
 					
 					//fetch correct branch
 				}
 			}
-			else if(robHead.getInstructionType() == InstructionType.STORE) {	//store
+			else if(robHead.getInstructionType() == InstructionType.STORE) {
 				if(writingCounter > 0) {
 					writingCounter--;
 					return;
@@ -63,7 +64,7 @@ public class ReorderBuffer {
 			else {
 				ProcessorBuilder.getProcessor().getRegisterFile().setRegisterValue((byte)robHead.getDestination(), robHead.getValue());
 				if(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus((byte)robHead.getDestination()) == head){
-					ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus((byte)robHead.getDestination(), (short)-1);//VALID register content
+					ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus((byte)robHead.getDestination(), VALID);
 				}
 			}
 		

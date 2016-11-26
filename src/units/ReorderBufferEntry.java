@@ -17,7 +17,6 @@ public class ReorderBufferEntry {
 		return ready;
 	}
 	
-	
 	public short getValue(){
 		return value;
 	}
