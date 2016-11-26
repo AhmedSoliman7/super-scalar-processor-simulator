@@ -90,6 +90,8 @@ public class ProcessorBuilder {
 		System.out.println("What is the initial address in the memory to write the program?");
 		short initAddress = sc.nextShort();
 		
+		processor.setPC(initAddress);
+		
 		Parser parser = new Parser();
 		parser.readProgram(filePath, initAddress, processor.getMemoryUnit());
 		

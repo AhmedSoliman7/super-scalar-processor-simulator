@@ -1,9 +1,11 @@
 package units;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import memory.MemoryHandler;
+import memory.ReturnPair;
 import reservation_station.ReservationStation;
 import reservation_station.ReservationStationType;
 
@@ -32,14 +34,42 @@ public class Processor {
 	private int instructionQueueMaxSize;
 	private int pipelineWidth;							
 	private int[] firstReservationStation;
-	private int[] countReservationStation; 				
+	private int[] countReservationStation;
+	private short PC;
+	private InstructionInFetch instructionInFetch;
 
 	public Processor(){
 		registerFile = new short[8];
 		registerStatus = new short[8];
 		Arrays.fill(registerStatus, (short) VALID);
 		countReservationStation = new int[5];
+		instructionQueue = new LinkedList<Short>();
+
 		prepareReservationStations();
+	}
+	
+	public void runClockCycle() {
+		fetchInstruction();
+		// TODO rest of this clock cycle
+	}
+	
+	public void fetchInstruction() {
+		if(instructionQueue.size() == instructionQueueMaxSize) {
+			return;
+		}
+		
+		if(instructionInFetch != null && !instructionInFetch.isReady()) {
+			instructionInFetch.decrementCycles();
+			
+			return;
+		}
+	
+		if(instructionInFetch != null) {
+			instructionQueue.add(instructionInFetch.getInstruction());
+		}
+		
+		ReturnPair<Short> instructionPair = memoryUnit.fetchInstruction(PC++);
+		instructionInFetch = new InstructionInFetch(instructionPair.value, (short) (instructionPair.clockCycles - 1));
 	}
 
 	private void prepareReservationStations(){
@@ -145,5 +175,16 @@ public class Processor {
 	public ReservationStation[] getReservationStations(){
 		return reservationStations;
 	}
-
+	
+	public void setPC(short PC) {
+		this.PC = PC;
+	}
+	
+	public InstructionInFetch getInstructionInFetch() {
+		return instructionInFetch;
+	}
+	
+	public Queue<Short> getInstructionQueue() {
+		return instructionQueue;
+	}
 }
