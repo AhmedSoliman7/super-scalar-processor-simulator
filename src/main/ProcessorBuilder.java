@@ -6,6 +6,11 @@ import java.util.Scanner;
 
 import memory.MemoryHandler;
 import memory.WritingPolicy;
+import reservation_station.AddReservationStation;
+import reservation_station.LoadReservationStation;
+import reservation_station.MultReservationStation;
+import reservation_station.NandReservationStation;
+import reservation_station.StoreReservationStation;
 import units.Processor;
 import units.ReorderBuffer;
 
@@ -68,16 +73,25 @@ public class ProcessorBuilder {
 		
 		int[] countRS = processor.getCountReservationStation();
 		
-		System.out.println("Please enter the number of LOAD reservation stations");
+		System.out.println("Please enter the number of LOAD reservation stations, and the time to calculate the address.");
 		countRS[0] = sc.nextInt();
-		System.out.println("Please enter the number of STORE reservation stations");
+		LoadReservationStation.setCycles(sc.nextInt());
+		
+		System.out.println("Please enter the number of STORE reservation stations, and the time to calculate the address.");
 		countRS[1] = sc.nextInt();
-		System.out.println("Please enter the number of ADD reservation stations");
+		StoreReservationStation.setCycles(sc.nextInt());
+		
+		System.out.println("Please enter the number of ADD reservation stations, and the time to execute.");
 		countRS[2] = sc.nextInt();
-		System.out.println("Please enter the number of MULT reservation stations");
+		AddReservationStation.setCycles(sc.nextInt());
+		
+		System.out.println("Please enter the number of MULT reservation stations, and the time to execute.");
 		countRS[3] = sc.nextInt();
-		System.out.println("Please enter the number of NAND reservation stations");
+		MultReservationStation.setCycles(sc.nextInt());
+		
+		System.out.println("Please enter the number of NAND reservation stations, and the time to execute.");
 		countRS[4] = sc.nextInt();
+		NandReservationStation.setCycles(sc.nextInt());
 		
 		System.out.println("Done configuring hardware organization.");
 	}

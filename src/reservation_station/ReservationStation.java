@@ -10,7 +10,10 @@ public abstract class ReservationStation {
 	private short Qj, Qk, Vj, Vk, destROB, address;
 	private boolean busy;
 	private ReservationStation tempRS;
-	
+	private ReservationStationState state;
+	private int timerTillNextState;
+	private int startTime;
+
 	public static ReservationStation create(ReservationStationType reservationStationType) { 
 		switch(reservationStationType) {
 		case LOAD : return new LoadReservationStation(true);
@@ -28,7 +31,9 @@ public abstract class ReservationStation {
 		setBusy();
 		this.setDestROB(destROB);
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setInstructionType(InstructionDecoder.getOpcode(instruction));
-		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setReady(false);
+		
+		this.state = ReservationStationState.EXEC;
+		this.timerTillNextState = 0;
 	}
 
 	public void issueInstructionSourceRegister1(byte rs){
@@ -62,7 +67,20 @@ public abstract class ReservationStation {
 			this.setVk(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterValue(rt));
 		}
 	}
+	
+	public void passToOtherReservationStations(short result) {
+		for(ReservationStation rs: ProcessorBuilder.getProcessor().getReservationStations()){
+			if(rs.getQj() == this.getDestROB()){
+				rs.setVj(result);
+			}
+			if(rs.getQk() == this.getDestROB()){
+				rs.setVk(result);
+			}
+		}
+	}
 
+	abstract boolean readyToWrite();
+	
 	public abstract void executeInstruction();
 
 	public abstract void writeInstruction();
@@ -173,5 +191,29 @@ public abstract class ReservationStation {
 		destROB = tempRS.destROB;
 		address = tempRS.address;
 		busy = tempRS.busy;
+	}
+	
+	void incrementTimer() {
+		this.timerTillNextState++;
+	}
+	
+	public ReservationStationState getState() {
+		return state;
+	}
+
+	void setState(ReservationStationState state) {
+		this.state = state;
+	}
+
+	int getTimerTillNextState() {
+		return timerTillNextState;
+	}
+	
+	public int getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(int startTime) {
+		this.startTime = startTime;
 	}
 }

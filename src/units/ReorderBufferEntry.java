@@ -17,24 +17,18 @@ public class ReorderBufferEntry {
 		return ready;
 	}
 	
-	public void setReady(boolean value){
-		if(tempROBEntry != null) {
-			tempROBEntry.setReady(value);
-			return;
-		}
-		ready = value;
-	}
 	
 	public short getValue(){
 		return value;
 	}
 	
 	public void setValue(short value){
-		this.value = value;
 		if(tempROBEntry != null) {
 			tempROBEntry.setValue(value);
 			return;
 		}
+		this.value = value;
+		this.ready = true;
 	}
 	
 	/**

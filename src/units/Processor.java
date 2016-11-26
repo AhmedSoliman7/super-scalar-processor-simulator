@@ -6,6 +6,7 @@ import java.util.Queue;
 import memory.MemoryHandler;
 import memory.ReturnPair;
 import reservation_station.ReservationStation;
+import reservation_station.ReservationStationState;
 import reservation_station.ReservationStationType;
 
 public class Processor {
@@ -23,7 +24,6 @@ public class Processor {
 	 * 2. Write result instructions
 	 * 3. Commit instructions
 	 */
-	private static final byte VALID = -1;
 	private ReservationStation[] reservationStations;	
 	private ReorderBuffer ROB;				
 	private MemoryHandler memoryUnit;
@@ -35,17 +35,25 @@ public class Processor {
 	private int[] countReservationStation;
 	private short PC;
 	private InstructionInFetch instructionInFetch;
+	private int timer;
 
 	public Processor(){
 		countReservationStation = new int[5];
 		registerFile = new RegisterFile(8, true);
 		instructionQueue = new LinkedList<Short>();
 		prepareReservationStations();
+		timer = 0;
 	}
 	
 	public void runClockCycle() {
+		commitInstructions();
+		writeResultInstructions();
+		executeInstructions();
+		issueInstructions();
 		fetchInstruction();
-		// TODO rest of this clock cycle
+		
+		this.flush();
+		timer++;
 	}
 	
 	public void fetchInstruction() {
@@ -90,6 +98,8 @@ public class Processor {
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
 					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().nextEntryIndex());
 					instructionQueue.poll();
+					reservationStations[firstReservationStation[typeIndex] + j].setStartTime(timer);
+					
 					continue mainLoop;
 				}
 			}
@@ -98,16 +108,25 @@ public class Processor {
 	}
 
 	private void executeInstructions(){
-		//TODO if instruction finished issuing
 		for(ReservationStation rs: reservationStations){
-			rs.executeInstruction();
+			if(rs.isBusy() && rs.getState() == ReservationStationState.EXEC) {
+				rs.executeInstruction();
+			}
 		}
 	}
 
 	private void writeResultInstructions(){
+		ReservationStation bestRS = null;
 		for(ReservationStation rs: reservationStations){
-			//TODO if rs finished execution
-			rs.writeInstruction();
+			if(rs.isBusy() && rs.getState() == ReservationStationState.WRITE) {
+				if(bestRS == null || rs.getStartTime() < bestRS.getStartTime()) {
+					bestRS = rs;
+				}
+			}
+		}
+		
+		if(bestRS != null) {
+			bestRS.writeInstruction();
 		}
 	}
 
@@ -122,6 +141,8 @@ public class Processor {
 		for(ReservationStation rs: reservationStations){
 			rs.clearBusy();
 		}
+		
+		this.flush();
 	}
 	
 	private void flush() {
