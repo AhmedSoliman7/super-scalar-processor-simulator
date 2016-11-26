@@ -23,7 +23,10 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(destRegister);						
 		}
 		else {
-			this.setAddress(InstructionDecoder.getImmediate(instruction));
+			short imm = InstructionDecoder.getImmediate(instruction);
+			this.setAddress(imm);
+			short effectiveAddress = imm;	//TODO add 1 + address of current instruction in memory
+			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(effectiveAddress);
 		}
 	}
 
