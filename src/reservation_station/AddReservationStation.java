@@ -1,5 +1,7 @@
 package reservation_station;
 
+import units.InstructionType;
+
 public class AddReservationStation extends IntOpernationReservationStation {
 	private static int cycles;
 	
@@ -9,10 +11,17 @@ public class AddReservationStation extends IntOpernationReservationStation {
 		}
 	}
 	
-	
 	@Override
 	short calculate() {
-		return (short) (this.getVj() + this.getVk());
+		InstructionType type = this.getOperationType();
+		switch (type) {
+		case ADD: case ADDI:
+			return (short) (this.getVj() + this.getVk());
+		case SUB: case BEQ:
+			return (short) (this.getVj() - this.getVk());
+		default:
+			throw new RuntimeException("Error! Unknown operation type in ADD reservation station.");
+		}
 	}
 
 	@Override

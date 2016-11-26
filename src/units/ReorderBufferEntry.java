@@ -4,7 +4,7 @@ import main.ProcessorBuilder;
 
 public class ReorderBufferEntry {
 
-	private byte instructionType;
+	private InstructionType instructionType;
 	private short value, destintation;
 	private boolean ready;
 	private ReorderBufferEntry tempROBEntry;
@@ -36,11 +36,11 @@ public class ReorderBufferEntry {
 	/**
 	 * @return opcode of the instruction in the current reorder buffer entry
 	 */
-	public byte getInstructionType(){
+	public InstructionType getInstructionType(){
 		return instructionType;
 	}
 	
-	public void setInstructionType(byte type) {
+	public void setInstructionType(InstructionType type) {
 		instructionType = type;
 	}
 	
