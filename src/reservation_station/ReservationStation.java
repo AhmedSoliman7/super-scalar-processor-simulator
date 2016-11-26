@@ -74,7 +74,6 @@ public abstract class ReservationStation {
 	public void setBusy() {
 		if(tempRS != null) {
 			tempRS.setBusy();
-			return;
 		}
 		busy = true;
 	}
@@ -167,5 +166,12 @@ public abstract class ReservationStation {
 	
 	public void flush() {
 		
+		Qj = tempRS.Qj;
+		Qk = tempRS.Qk;
+		Vj = tempRS.Vj;
+		Vk = tempRS.Vk;
+		destROB = tempRS.destROB;
+		address = tempRS.address;
+		busy = tempRS.busy;
 	}
 }
