@@ -25,7 +25,7 @@ public class LoadReservationStation extends ReservationStation {
 		super.issueInstruction(instruction, destROB);
 		this.setAddress(InstructionDecoder.getImmediate(instruction));
 		byte rt = InstructionDecoder.getRT(instruction);
-		ProcessorBuilder.getProcessor().setRegisterStatus(rt, destROB);
+		ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus(rt, destROB);
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(rt);
 	}
 

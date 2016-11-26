@@ -18,16 +18,16 @@ public class ProcessorBuilder {
 	
 	static Processor processor;
 
-	Scanner sc;
+	static Scanner sc;
 	
-	private void buildMemory() throws Exception {
+	private static void buildMemory() {
 		System.out.println("Memory configurations:");
 		System.out.println("What is the number of cache levels?");
 		
 		int numberOfCaches = sc.nextInt();
 		
 		if(numberOfCaches <= 0) {
-			throw new Exception("Invalid number of caches.");
+			throw new RuntimeException("Invalid number of caches.");
 		}
 		
 		System.out.println("What is the number of cycles required to access the main memory?");
@@ -56,7 +56,7 @@ public class ProcessorBuilder {
 		processor.setMemoryUnit(memory);
 	}
 	
-	private void buildHardwareOrganization() {
+	private static void buildHardwareOrganization() {
 		System.out.println("Hardware Organization Configurations:");
 		System.out.println("Please enter the pipeline width (the number of instructions that can be issued to the reservation stations "
 				+ "simultaneously):");
@@ -69,7 +69,7 @@ public class ProcessorBuilder {
 		
 		System.out.println("Please enter the number of ROB entries");
 		int ROBEntries = sc.nextInt();
-		processor.setROB(new ReorderBuffer((short) ROBEntries, processor));
+		processor.setROB(new ReorderBuffer((short) ROBEntries));
 		
 		int[] countRS = processor.getCountReservationStation();
 		
@@ -96,7 +96,7 @@ public class ProcessorBuilder {
 		System.out.println("Done configuring hardware organization.");
 	}
 	
-	private void initializeMemory() throws FileNotFoundException {
+	private static void initializeMemory() throws FileNotFoundException {
 		System.out.println("Please enter the path to the assembly program file.");
 		sc.nextLine();
 		String filePath = sc.nextLine();
@@ -127,14 +127,22 @@ public class ProcessorBuilder {
 		System.out.println("Done initializing the memory.");
 	}
 	
-	public Processor buildProcessor(InputStream in) throws Exception {
+	public static Processor buildProcessor(InputStream in) {
 		processor = new Processor();
 		
 		sc = new Scanner(in);
 		
 		buildMemory();
 		buildHardwareOrganization();
-		initializeMemory();
+		
+		
+		try {
+			initializeMemory();
+		}
+		catch(FileNotFoundException e) {
+			System.err.println(e.getMessage());
+		}
+		
 		
 		sc.close();
 		
@@ -142,10 +150,12 @@ public class ProcessorBuilder {
 	}
 	
 	public static Processor getProcessor() {
+		if(processor == null)
+			processor = buildProcessor(System.in);
 		return processor;
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		Processor p = new ProcessorBuilder().buildProcessor(System.in);
 	}
 }

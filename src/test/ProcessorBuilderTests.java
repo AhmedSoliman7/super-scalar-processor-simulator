@@ -23,7 +23,7 @@ public class ProcessorBuilderTests {
 		ProcessorBuilder builder = new ProcessorBuilder();
 		builder.buildProcessor(new FileInputStream(USR_FILE_NAME));
 
-		MemoryHandler handler = builder.getProcessor().getMemoryUnit();
+		MemoryHandler handler = ProcessorBuilder.getProcessor().getMemoryUnit();
 		
 		ReturnPair<Short> pair = handler.read((short) 0);
 		assertEquals("Read value should be 1",

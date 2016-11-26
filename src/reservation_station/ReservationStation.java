@@ -29,39 +29,39 @@ public abstract class ReservationStation {
 		issueInstructionSourceRegister1(InstructionDecoder.getRS(instruction));
 		setBusy();
 		this.setDestROB(destROB);
-		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setType(InstructionDecoder.getOpcode(instruction));
+		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setInstructionType(InstructionDecoder.getOpcode(instruction));
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setReady(false);
 	}
 
 	public void issueInstructionSourceRegister1(byte rs){
 
-		if(ProcessorBuilder.getProcessor().getRegisterStatus(rs) != VALID){
-			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterStatus(rs));
+		if(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rs) != VALID){
+			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rs));
 			if(ROBEntry.isReady()){
 				this.setVj(ROBEntry.getValue());
 			}
 			else{
-				this.setQj(ProcessorBuilder.getProcessor().getRegisterStatus(rs));
+				this.setQj(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rs));
 			}
 		}
 		else{
-			this.setVj(ProcessorBuilder.getProcessor().getRegisterValue(rs));
+			this.setVj(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterValue(rs));
 		}
 	}
 
 	public void issueInstructionSourceRegister2(byte rt){
 
-		if(ProcessorBuilder.getProcessor().getRegisterStatus(rt) != VALID){
-			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterStatus(rt));
+		if(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rt) != VALID){
+			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rt));
 			if(ROBEntry.isReady()){
 				this.setVk(ROBEntry.getValue());
 			}
 			else{
-				this.setQk(ProcessorBuilder.getProcessor().getRegisterStatus(rt));
+				this.setQk(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rt));
 			}
 		}
 		else{
-			this.setVk(ProcessorBuilder.getProcessor().getRegisterValue(rt));
+			this.setVk(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterValue(rt));
 		}
 	}
 
