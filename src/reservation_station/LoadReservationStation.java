@@ -21,13 +21,17 @@ public class LoadReservationStation extends ReservationStation {
 
 	@Override
 	public void executeInstruction() {
-		// TODO Auto-generated method stub
+		if(Qj == 0 && !processor.getROB().findMatchingStoreAddress((short) (address + Vj), destROB)){
+			address += Vj;
+			//TODO: read from memory
+			clear();
+		}
 		
 	}
 
 	@Override
 	public void writeInstruction() {
-		// TODO Auto-generated method stub
+		// TODO CDB available
 		
 	}
 

@@ -21,14 +21,25 @@ public class IntOpernationReservationStation extends ReservationStation {
 
 	@Override
 	public void executeInstruction() {
-		// TODO Auto-generated method stub
-		
+		if(Qj == 0 && Qk == 0){
+			//TODO go into excution with cycles, and execute in last cycle
+		}
 	}
 
 	@Override
 	public void writeInstruction() {
-		// TODO Auto-generated method stub
-		
+		//TODO CDB available -- calculate result
+		short result;
+		for(ReservationStation rs: processor.getReservationStations()){
+			if(rs.getQj() == destROB){
+				rs.setVj(result);
+			}
+			if(rs.getQk() == destROB){
+				rs.setVk(result);
+			}
+		}
+		processor.getROB().getEntry(destROB).setValue(result);
+		clear();
 	}
 
 }

@@ -1,5 +1,6 @@
 package units;
 
+import java.util.Arrays;
 import java.util.Queue;
 
 import memory.MemoryHandler;
@@ -22,7 +23,7 @@ public class Processor {
 	 * 2. Write result instructions
 	 * 3. Commit instructions
 	 */
-	private static final int VALID = -1;
+	private static final byte VALID = -1;
 	private ReservationStation[] reservationStations;	
 	private ReorderBuffer ROB;							//TODO initialize with size from input
 	private short[] registerFile;						//TODO initialize with size 8
@@ -74,15 +75,27 @@ public class Processor {
 	}
 	
 	private void executeInstructions(){
-		//TODO loop on reservation stations and execute possible ones. 
+		for(ReservationStation rs: reservationStations){
+			rs.executeInstruction();
+		}
 	}
 	
 	private void writeResultInstructions(){
-		//TODO loop on reservation stations and write result of possible ones
+		for(ReservationStation rs: reservationStations){
+			rs.writeInstruction();
+		}
 	}
 	
 	private void commitInstructions(){
-		//TODO commit head of ROB if possible
+		ROB.commit();
+	}
+	
+	public void clear() {
+		Arrays.fill(registerStatus, VALID);
+		ROB.clear();
+		for(ReservationStation rs: reservationStations){
+			rs.clear();
+		}
 	}
 	
 	/*
@@ -94,7 +107,7 @@ public class Processor {
 	}
 
 	public void setRegisterStatus(byte register, short value) {
-		this.registerStatus[register] = value;
+		registerStatus[register] = value;
 	}
 
 	public ReorderBuffer getROB() {
@@ -103,5 +116,17 @@ public class Processor {
 	
 	public short getRegisterValue(byte register) {
 		return registerFile[register];
+	}
+	
+	public void setRegisterValue(byte register, short value) {
+		registerFile[register] = value;
+	}
+	
+	public ReservationStation[] getReservationStations(){
+		return reservationStations;
+	}
+	
+	public MemoryHandler getMemoryUnit(){
+		return memoryUnit;
 	}
 }

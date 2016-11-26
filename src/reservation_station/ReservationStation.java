@@ -40,7 +40,7 @@ public abstract class ReservationStation {
 
 	public void issueInstruction(short instruction, short destROB){
 		issueInstructionSourceRegister1(InstructionDecoder.getRS(instruction));
-		this.busy = true;
+		setBusy();
 		this.destROB = destROB;
 		processor.getROB().getEntry(destROB).setType(InstructionDecoder.getOpcode(instruction));
 		processor.getROB().getEntry(destROB).setReady(false);
@@ -86,7 +86,33 @@ public abstract class ReservationStation {
 
 	public abstract void writeInstruction();
 	
-	public boolean isBusy(){
+	public void clear() {
+		busy = false;
+	}
+	
+	public boolean isBusy() {
 		return busy;
+	}
+	
+	public void setBusy() { 
+		busy = true;
+	}
+	
+	public void setVj(short value){
+		Vj = value;
+		Qj = 0;
+	}
+	
+	public void setVk(short value){
+		Vk = value;
+		Qk = 0;
+	}
+	
+	public short getQj(){
+		return Qj;
+	}
+	
+	public short getQk(){
+		return Qk;
 	}
 }
