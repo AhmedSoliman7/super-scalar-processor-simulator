@@ -29,16 +29,17 @@ public class Processor {
 	private short[] registerStatus;						
 	private MemoryHandler memoryUnit;					
 	private Queue<Short> instructionQueue;				//TODO initialize with size from input
-	private int piplineWidth;							//TODO input
+	private int instructionQueueMaxSize;
+	private int pipelineWidth;							//TODO input
 	private int[] firstReservationStation;
 	private int[] countReservationStation; 				//TODO initialize with size 5 and values from input
-	
+
 	public Processor(){
 		//TODO: initialization
 		registerFile = new short[8];
 		registerStatus = new short[8];
-		Arrays.fill(registerStatus, (short) VALID); 
-		
+		Arrays.fill(registerStatus, (short) VALID);
+		countReservationStation = new int[5];
 		
 		 prepareReservationStations();
 	}
@@ -59,7 +60,7 @@ public class Processor {
 	}
 	
 	private void issueInstructions(){
-		mainLoop: for(int i = 0; i < piplineWidth && !instructionQueue.isEmpty() && !getROB().isFull(); ++i){
+		mainLoop: for(int i = 0; i < pipelineWidth && !instructionQueue.isEmpty() && !getROB().isFull(); ++i){
 			short currentInstruction = instructionQueue.peek();
 			ReservationStationType currentType = ReservationStationType.getType(currentInstruction);
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
@@ -111,5 +112,21 @@ public class Processor {
 	
 	public void setMemoryUnit(MemoryHandler memoryUnit) {
 		this.memoryUnit = memoryUnit;
+	}
+	
+	public int[] getCountReservationStation() {
+		return countReservationStation;
+	}
+
+	public void setROB(ReorderBuffer rOB) {
+		ROB = rOB;
+	}
+
+	public void setInstructionQueueMaxSize(int instructionQueueMaxSize) {
+		this.instructionQueueMaxSize = instructionQueueMaxSize;
+	}
+
+	public void setPipelineWidth(int piplineWidth) {
+		this.pipelineWidth = piplineWidth;
 	}
 }

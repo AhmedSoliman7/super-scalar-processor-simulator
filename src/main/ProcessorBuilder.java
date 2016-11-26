@@ -1,18 +1,21 @@
 package main;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 import memory.MemoryHandler;
 import memory.WritingPolicy;
 import units.Processor;
+import units.ReorderBuffer;
 
 public class ProcessorBuilder {
 	
 	Processor processor;
+
 	Scanner sc;
 	
-	void buildMemory() throws Exception {
+	private void buildMemory() throws Exception {
 		System.out.println("Memory configurations:");
 		System.out.println("What is the number of cache levels?");
 		
@@ -31,7 +34,7 @@ public class ProcessorBuilder {
 		System.out.println("S L M W A");
 		System.out.println("Where S is the cache size, L is the block size, "
 				+ "M is the cache associativity, W is the writing policy (0 => write back, 1 => write through)"
-				+ "and A is the number of cycles to access this cache level.");
+				+ " and A is the number of cycles to access this cache level.");
 		
 		for(int cache = 1; cache <= numberOfCaches; cache++) {
 			System.out.printf("Cache level %d\n", cache);
@@ -48,8 +51,40 @@ public class ProcessorBuilder {
 		processor.setMemoryUnit(memory);
 	}
 	
-	void initializeMemory() throws FileNotFoundException {
+	private void buildHardwareOrganization() {
+		System.out.println("Hardware Organization Configurations:");
+		System.out.println("Please enter the pipeline width (the number of instructions that can be issued to the reservation stations "
+				+ "simultaneously):");
+		int pipelineWidth = sc.nextInt();
+		processor.setPipelineWidth(pipelineWidth);
+		
+		System.out.println("Please specify the size of the instruction buffer (queue):");
+		int instructionBuffer = sc.nextInt();
+		processor.setInstructionQueueMaxSize(instructionBuffer);
+		
+		System.out.println("Please enter the number of ROB entries");
+		int ROBEntries = sc.nextInt();
+		processor.setROB(new ReorderBuffer(ROBEntries));
+		
+		int[] countRS = processor.getCountReservationStation();
+		
+		System.out.println("Please enter the number of LOAD reservation stations");
+		countRS[0] = sc.nextInt();
+		System.out.println("Please enter the number of STORE reservation stations");
+		countRS[1] = sc.nextInt();
+		System.out.println("Please enter the number of ADD reservation stations");
+		countRS[2] = sc.nextInt();
+		System.out.println("Please enter the number of MULT reservation stations");
+		countRS[3] = sc.nextInt();
+		System.out.println("Please enter the number of NAND reservation stations");
+		countRS[4] = sc.nextInt();
+		
+		System.out.println("Done configuring hardware organization.");
+	}
+	
+	private void initializeMemory() throws FileNotFoundException {
 		System.out.println("Please enter the path to the assembly program file.");
+		sc.nextLine();
 		String filePath = sc.nextLine();
 		
 		System.out.println("What is the initial address in the memory to write the program?");
@@ -76,15 +111,25 @@ public class ProcessorBuilder {
 		System.out.println("Done initializing the memory.");
 	}
 	
-	Processor buildProcessor() throws Exception {
+	public Processor buildProcessor(InputStream in) throws Exception {
 		processor = new Processor();
 		
-		sc = new Scanner(System.in);
+		sc = new Scanner(in);
 		
 		buildMemory();
+		buildHardwareOrganization();
+		initializeMemory();
 		
 		sc.close();
 		
 		return processor;	
+	}
+	
+	public Processor getProcessor() {
+		return processor;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		Processor p = new ProcessorBuilder().buildProcessor(System.in);
 	}
 }
