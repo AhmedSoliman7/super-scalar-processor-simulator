@@ -39,15 +39,15 @@ public class ReorderBuffer {
 	public void commit() {			//TODO handle JMP, JALR, RET
 		if(!isEmpty() && entries[head].isReady()){
 			ReorderBufferEntry robHead = entries[head]; 
-			if(robHead.getInstructionType() == 4) {	//branch
+			if(robHead.getInstructionType() == InstructionType.BEQ) {	//branch
 
-				if(robHead.getValue() != 0){			//TODO mispredicted branch
+				if(robHead.getValue() != 0){			//TODO check mispredicted branch
 					ProcessorBuilder.getProcessor().clear();
 					
 					//fetch correct branch
 				}
 			}
-			else if(robHead.getInstructionType() == 2) {	//store
+			else if(robHead.getInstructionType() == InstructionType.STORE) {	//store
 				if(writingCounter > 0) {
 					writingCounter--;
 					return;
@@ -80,7 +80,7 @@ public class ReorderBuffer {
 	
 	public boolean findMatchingStoreAddress(short address, short end){
 		for(short i = head; i != end; i = (short)((i + 1) % maxSize)){
-			if(entries[i].getInstructionType() == 2 && entries[i].getDestination() == address){
+			if(entries[i].getInstructionType() == InstructionType.STORE && entries[i].getDestination() == address){
 				return true;
 			}
 		}
