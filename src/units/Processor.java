@@ -1,5 +1,6 @@
 package units;
 
+import java.util.Arrays;
 import java.util.Queue;
 
 import memory.MemoryHandler;
@@ -24,9 +25,9 @@ public class Processor {
 	private static final int VALID = -1;
 	private ReservationStation[] reservationStations;	
 	private ReorderBuffer ROB;							//TODO initialize with size from input
-	private short[] registerFile;						//TODO initialize with size 8
-	private short[] registerStatus;						//TODO initialize with size 8 and fill with VALID
-	private MemoryHandler memoryUnit;					//TODO input
+	private short[] registerFile;						
+	private short[] registerStatus;						
+	private MemoryHandler memoryUnit;					
 	private Queue<Short> instructionQueue;				//TODO initialize with size from input
 	private int piplineWidth;							//TODO input
 	private int[] firstReservationStation;
@@ -34,9 +35,9 @@ public class Processor {
 	
 	public Processor(){
 		//TODO: initialization
-		
-		
-		
+		registerFile = new short[8];
+		registerStatus = new short[8];
+		Arrays.fill(registerStatus, (short) VALID); 
 		
 		
 		 prepareReservationStations();
@@ -102,5 +103,13 @@ public class Processor {
 	
 	public short getRegisterValue(byte register) {
 		return registerFile[register];
+	}
+	
+	public MemoryHandler getMemoryUnit() {
+		return this.memoryUnit;
+	}
+	
+	public void setMemoryUnit(MemoryHandler memoryUnit) {
+		this.memoryUnit = memoryUnit;
 	}
 }
