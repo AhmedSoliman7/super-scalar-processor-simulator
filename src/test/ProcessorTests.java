@@ -86,11 +86,11 @@ public class ProcessorTests {
 		out.println("2");
 		out.println("5");
 		out.println("5");
-		out.println("1");
-		out.println("1");
-		out.println("1");
-		out.println("1");
-		out.println("1");
+		out.println("1 2");
+		out.println("1 2");
+		out.println("1 2");
+		out.println("1 2");
+		out.println("1 2");
 		out.println(ASM_FILE_NAME);
 		out.println("100");
 		out.println("20");

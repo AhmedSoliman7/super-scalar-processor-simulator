@@ -10,6 +10,8 @@ public abstract class ReservationStation {
 	private short Qj, Qk, Vj, Vk, destROB, address;
 	private boolean busy;
 	private ReservationStation tempRS;
+	private ReservationStationState state;
+	private int timerTillNextState;
 	
 	public static ReservationStation create(ReservationStationType reservationStationType) { 
 		switch(reservationStationType) {

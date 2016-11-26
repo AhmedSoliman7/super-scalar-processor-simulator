@@ -4,7 +4,8 @@ import main.ProcessorBuilder;
 import units.InstructionDecoder;
 
 public class StoreReservationStation extends ReservationStation {
-
+	private static int cycles;
+	
 	protected StoreReservationStation(boolean isOriginal) {
 		if(isOriginal)
 			this.setTempReservationStation(new StoreReservationStation(false));
@@ -32,5 +33,13 @@ public class StoreReservationStation extends ReservationStation {
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(this.getVk());
 			this.clearBusy();
 		}
+	}
+	
+	public static int getCycles() {
+		return cycles;
+	}
+
+	public static void setCycles(int cycles) {
+		StoreReservationStation.cycles = cycles;
 	}
 }

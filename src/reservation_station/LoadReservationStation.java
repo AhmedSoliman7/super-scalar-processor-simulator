@@ -5,10 +5,19 @@ import units.InstructionDecoder;
 import units.Processor;
 
 public class LoadReservationStation extends ReservationStation {
-
+	private static int cycles;
+	
 	protected LoadReservationStation(boolean isOriginal) {
 		if(isOriginal)
 			this.setTempReservationStation(new LoadReservationStation(false));
+	}
+	
+	public static int getCycles() {
+		return cycles;
+	}
+
+	public static void setCycles(int cycles) {
+		LoadReservationStation.cycles = cycles;
 	}
 
 	@Override
