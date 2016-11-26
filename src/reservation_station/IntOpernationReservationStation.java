@@ -3,7 +3,7 @@ package reservation_station;
 import units.InstructionDecoder;
 import units.Processor;
 
-public class IntOpernationReservationStation extends ReservationStation {
+public abstract class IntOpernationReservationStation extends ReservationStation {
 
 	protected IntOpernationReservationStation(Processor processor) {
 		super(processor);
@@ -22,7 +22,7 @@ public class IntOpernationReservationStation extends ReservationStation {
 	@Override
 	public void executeInstruction() {
 		if(Qj == 0 && Qk == 0){
-			//TODO go into excution with cycles, and execute in last cycle
+			//TODO go into execution with cycles, and execute in last cycle
 		}
 	}
 

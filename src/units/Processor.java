@@ -96,7 +96,7 @@ public class Processor {
 		Arrays.fill(registerStatus, VALID);
 		ROB.clear();
 		for(ReservationStation rs: reservationStations){
-			rs.clear();
+			rs.clearBusy();
 		}
 	}
 	

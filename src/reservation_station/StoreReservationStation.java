@@ -5,9 +5,10 @@ import units.Processor;
 
 public class StoreReservationStation extends ReservationStation {
 
-	protected StoreReservationStation(Processor processor) {
+	protected StoreReservationStation(Processor processor, boolean isOriginal) {
 		super(processor);
-		// TODO Auto-generated constructor stub
+		if(isOriginal)
+			this.setTempReservationStation(new StoreReservationStation(processor, false));
 
 	}
 
@@ -15,19 +16,19 @@ public class StoreReservationStation extends ReservationStation {
 	public void issueInstruction(short instruction, short destROB) {
 		super.issueInstruction(instruction, destROB);
 		super.issueInstructionSourceRegister2(InstructionDecoder.getRT(instruction));
-		address = InstructionDecoder.getImmediate(instruction);
+		this.setAddress(InstructionDecoder.getImmediate(instruction));
 	}
 
 	@Override
 	public void executeInstruction() {
-		if(Qj == 0){
-			processor.getROB().getEntry(destROB).setDestination((short) (Vj + address));
+		if(this.getQj() == 0){
+			Processor.getProcessor().getROB().getEntry(destROB).setDestination((short) (Vj + address));
 		}
 	}
 
 	@Override
 	public void writeInstruction() {
-		if(Qk == 0){
+		if(this.getQk() == 0){
 			processor.getROB().getEntry(destROB).setValue(Vk);
 			this.clearBusy();
 		}

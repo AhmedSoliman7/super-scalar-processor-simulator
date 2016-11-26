@@ -5,9 +5,10 @@ import units.Processor;
 
 public class LoadReservationStation extends ReservationStation {
 
-	protected LoadReservationStation(Processor processor) {
+	protected LoadReservationStation(Processor processor, boolean isOriginal) {
 		super(processor);
-		// TODO Auto-generated constructor stub
+		if(isOriginal)
+			this.setTempReservationStation(new LoadReservationStation(processor, false));
 	}
 
 	@Override

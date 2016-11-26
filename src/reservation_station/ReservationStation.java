@@ -6,26 +6,17 @@ import units.ReorderBufferEntry;
 
 public abstract class ReservationStation {
 
-	static final int VALID = -1;
-	protected Processor processor;
-	protected byte opType;
-	protected short Qj, Qk, Vj, Vk, destROB, address;
-	protected boolean busy;
+	private static final int VALID = -1;
+	private Processor processor;
+	private byte opType;
+	private short Qj, Qk, Vj, Vk, destROB, address;
+	private boolean busy;
+	private ReservationStation tempRS;
 	
-	/**
-	 * Constructor. Called by subclasses
-	 * @param processor
-	 */
 	protected ReservationStation(Processor processor){
 		this.processor = processor;
 	}
 	
-	/**
-	 * Creates a reservation station according to the specified type
-	 * @param reservationStationType
-	 * @param processor
-	 * @return
-	 */
 	public static ReservationStation create(ReservationStationType reservationStationType, Processor processor) { 
 		switch(reservationStationType) {
 		case LOAD : return new LoadReservationStation(processor);
@@ -114,5 +105,9 @@ public abstract class ReservationStation {
 	
 	public short getQk(){
 		return Qk;
+	}
+	
+	public void setTempReservationStation(ReservationStation rs) {
+		tempRS = rs;
 	}
 }
