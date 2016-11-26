@@ -74,7 +74,7 @@ public class Parser {
 			short regB = registerMap.get(assembly[2]);
 			short imm = Short.parseShort(assembly[3]);
 			
-			code |= (regA << 10) | (regB << 7) | (imm & ((1 << 7) - 1));
+			code |= (regB << 10) | (regA << 7) | (imm & ((1 << 7) - 1));
 		}
 		else {
 			short regA = registerMap.get(assembly[1]);
@@ -83,7 +83,7 @@ public class Parser {
 			if(opcode == 5) {
 				short imm = Short.parseShort(assembly[2]);
 				
-				code |= ((imm & ((1 << 7) - 1)) << 3);
+				code |= (imm & ((1 << 7) - 1));
 			}
 			else if(opcode == 6) {
 				short regB = registerMap.get(assembly[2]);

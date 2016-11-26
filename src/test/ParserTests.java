@@ -57,7 +57,7 @@ public class ParserTests {
 				handler.getMainMemory().getData()[startAddress++]);
 		
 		assertEquals(
-				(short) -22424,
+				(short) -22515,
 				handler.getMainMemory().getData()[startAddress++]);
 		
 		assertEquals(
@@ -79,10 +79,10 @@ public class ParserTests {
 		out.println("SuB R7, r6 4");
 		out.println("NAND r1, r5, r3");
 		out.println("MULT r7, r7, r7");
-		out.println("LW r7, r6, 32");
-		out.println("SW r6, r1, -16");
-		out.println("ADDI r1, r2, 15");
-		out.println("beq r5, r7, 4");
+		out.println("LW r6, r7, 32");
+		out.println("SW r1, r6, -16");
+		out.println("ADDI r2, r1, 15");
+		out.println("beq r7, r5, 4");
 		out.println("jmp r2, 13");
 		out.println("JALR r1, r2");
 		out.println("RET r1");
