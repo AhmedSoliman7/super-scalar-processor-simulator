@@ -2,11 +2,13 @@ package reservation_station;
 
 import main.ProcessorBuilder;
 import units.InstructionDecoder;
+import units.InstructionType;
 import units.ReorderBufferEntry;
 
 public abstract class ReservationStation {
 
 	protected static final short VALID = -1, READY = -1;
+	private InstructionType opType;
 	private short Qj, Qk, Vj, Vk, destROB, address;
 	private boolean busy;
 	private ReservationStation tempRS;
@@ -27,8 +29,9 @@ public abstract class ReservationStation {
 	}
 
 	public void issueInstruction(short instruction, short destROB){
-		issueInstructionSourceRegister1(InstructionDecoder.getRS(instruction));
-		setBusy();
+		this.setOperationType(InstructionType.getInstructionType(instruction));
+		this.issueInstructionSourceRegister1(InstructionDecoder.getRS(instruction));
+		this.setBusy();
 		this.setDestROB(destROB);
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setInstructionType(InstructionDecoder.getOpcode(instruction));
 		
@@ -215,5 +218,13 @@ public abstract class ReservationStation {
 
 	public void setStartTime(int startTime) {
 		this.startTime = startTime;
+	}
+	
+	protected InstructionType getOperationType() {
+		return opType;
+	}
+	
+	private void setOperationType(InstructionType type) {
+		this.opType = type;
 	}
 }

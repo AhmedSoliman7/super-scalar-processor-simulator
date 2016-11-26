@@ -13,16 +13,9 @@ public class Processor {
 
 	/*
 	 * TODO
-	 * fetch, issue, write, commit => one cycle each. Execute N cycles
 	 * Unconditional => predicated as taken
 	 * Conditional => taken for +ve offset and not taken otherwise
-	 * Handle simultaenously running instructions
 	 * 
-	 * Missing
-	 * =======
-	 * 1. Execute instructions
-	 * 2. Write result instructions
-	 * 3. Commit instructions
 	 */
 	private ReservationStation[] reservationStations;	
 	private ReorderBuffer ROB;				
