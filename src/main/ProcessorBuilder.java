@@ -64,7 +64,7 @@ public class ProcessorBuilder {
 		
 		System.out.println("Please enter the number of ROB entries");
 		int ROBEntries = sc.nextInt();
-		processor.setROB(new ReorderBuffer(ROBEntries));
+		processor.setROB(new ReorderBuffer((short) ROBEntries, processor));
 		
 		int[] countRS = processor.getCountReservationStation();
 		
