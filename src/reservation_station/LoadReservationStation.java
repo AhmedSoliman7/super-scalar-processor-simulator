@@ -60,8 +60,6 @@ public class LoadReservationStation extends ReservationStation {
 		.getEntry(this.getDestROB())
 		.setValue(fetchedPair.value);
 		
-		passToOtherReservationStations(fetchedPair.value);
-		
 		this.setState(ReservationStationState.COMMIT);
 		this.clearBusy();
 	}

@@ -1,5 +1,6 @@
 package units;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -41,7 +42,6 @@ public class Processor {
 		countReservationStation = new int[5];
 		registerFile = new RegisterFile(8, true);
 		instructionQueue = new LinkedList<Short>();
-		prepareReservationStations();
 		timer = 0;
 	}
 	
@@ -75,7 +75,7 @@ public class Processor {
 		instructionInFetch = new InstructionInFetch(instructionPair.value, (short) (instructionPair.clockCycles - 1));
 	}
 
-	private void prepareReservationStations(){
+	public void prepareReservationStations(){
 		int totalRS = 0;
 		firstReservationStation = new int[5];
 		for(int i = 0; i < 5; i++){
@@ -95,6 +95,7 @@ public class Processor {
 			short currentInstruction = instructionQueue.peek();
 			ReservationStationType currentType = ReservationStationType.getType(currentInstruction);
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
+				
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
 					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().nextEntryIndex());
 					instructionQueue.poll();
@@ -199,5 +200,9 @@ public class Processor {
 	
 	public Queue<Short> getInstructionQueue() {
 		return instructionQueue;
+	}
+
+	public short getPC() {
+		return this.PC;
 	}
 }

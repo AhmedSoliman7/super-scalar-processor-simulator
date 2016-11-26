@@ -146,6 +146,7 @@ public class ProcessorBuilder {
 		
 		sc.close();
 		
+		processor.prepareReservationStations();
 		return processor;	
 	}
 	

@@ -1,5 +1,7 @@
 package units;
 
+import main.ProcessorBuilder;
+
 public class ReorderBufferEntry {
 
 	private byte instructionType;
@@ -49,7 +51,7 @@ public class ReorderBufferEntry {
 	
 	public void setDestination(short value){
 		if(tempROBEntry != null) {
-			tempROBEntry.setValue(value);
+			tempROBEntry.setDestination(value);
 			return;
 		}
 		destintation = value;
