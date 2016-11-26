@@ -6,15 +6,33 @@ public class MemoryHandler {
 	int numberOfCaches;
 	MainMemory mainMemory;
 	
-	public MemoryHandler(int numberOfCaches) {
+	public MemoryHandler(int numberOfCaches, short memoryAccessTime) {
 		this.numberOfCaches = numberOfCaches;
 		
-		mainMemory = new MainMemory();
+		mainMemory = new MainMemory(memoryAccessTime);
 		instructionCaches = new Cache[numberOfCaches];
 		dataCaches = new Cache[numberOfCaches];
 		
 		configureMemoryHierarchy(instructionCaches);
 		configureMemoryHierarchy(dataCaches);
+	}
+	
+	public void configureCache(int cacheLevel, short size, short blockSize, short associativity, WritingPolicy writingPolicy, short accessTime) {
+		instructionCaches[cacheLevel - 1].configureCache(size,
+				blockSize,
+				associativity,
+				writingPolicy,
+				accessTime);
+		
+		dataCaches[cacheLevel - 1].configureCache(size,
+				blockSize,
+				associativity,
+				writingPolicy,
+				accessTime);
+	}
+	
+	public void initializeMainMemoryEntry(short address, short value) {
+		this.mainMemory.write(address, value);
 	}
 	
 	private void configureMemoryHierarchy(Cache[] caches) {

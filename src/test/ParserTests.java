@@ -18,7 +18,7 @@ public class ParserTests {
 
 	@Test
 	public void testAssemblyParsing() throws FileNotFoundException {
-		MemoryHandler handler = new MemoryHandler(1);
+		MemoryHandler handler = new MemoryHandler(1, (short) 10);
 		short startAddress = 10;
 		initAssembly();
 

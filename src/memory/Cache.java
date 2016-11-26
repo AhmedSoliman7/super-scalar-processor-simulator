@@ -21,11 +21,12 @@ public class Cache extends Storage {
 	int readMisses;
 	int writeMisses;
 
-	public void configureCache(short size, short blockSize, short associativity, WritingPolicy writingPolicy) {
+	public void configureCache(short size, short blockSize, short associativity, WritingPolicy writingPolicy, short accessTime) {
 		this.size = size;
 		this.blockSize = blockSize;
 		this.associativity = associativity;
 		this.writingPolicy = writingPolicy;
+		this.accessTime = accessTime;
 		
 		readHits = writeHits = readMisses = writeMisses = 0;
 
