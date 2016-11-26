@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 
 import org.junit.Test;
 
-import main.Parser;
 import main.ProcessorBuilder;
 import memory.MemoryHandler;
 import memory.ReturnPair;
@@ -174,17 +173,13 @@ public class ProcessorBuilderTests {
 				0,
 				handler.getDataCaches()[2].getWriteHits());
 
-
-
 		clean();
 	}
 
 	static final String ASM_FILE_NAME = "testFile.asm";
 	static final String USR_FILE_NAME = "testFile.usr";
 
-	Parser parser;
 	void initAssembly() throws FileNotFoundException {
-		parser = new Parser();
 		PrintWriter out = new PrintWriter(ASM_FILE_NAME);
 
 		out.println("ADD r1,r2 r7");

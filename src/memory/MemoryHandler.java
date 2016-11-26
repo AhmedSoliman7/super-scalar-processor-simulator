@@ -52,6 +52,10 @@ public class MemoryHandler {
 		return dataCaches[0].write(address, value);
 	}
 	
+	public ReturnPair<Short> fetchInstruction(short address) {
+		return instructionCaches[0].fetch(address);
+	}
+	
 	public Cache[] getInstructionCaches() {
 		return instructionCaches;
 	}
