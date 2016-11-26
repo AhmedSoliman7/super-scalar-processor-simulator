@@ -2,18 +2,16 @@ package reservation_station;
 
 import main.ProcessorBuilder;
 import units.InstructionDecoder;
-import units.Processor;
 import units.ReorderBufferEntry;
 
 public abstract class ReservationStation {
 
 	private static final int VALID = -1;
-	private byte opType;
 	private short Qj, Qk, Vj, Vk, destROB, address;
 	private boolean busy;
 	private ReservationStation tempRS;
 	
-	public static ReservationStation create(ReservationStationType reservationStationType, Processor processor) { 
+	public static ReservationStation create(ReservationStationType reservationStationType) { 
 		switch(reservationStationType) {
 		case LOAD : return new LoadReservationStation(true);
 		case STORE: return new StoreReservationStation(true);
@@ -28,7 +26,7 @@ public abstract class ReservationStation {
 	public void issueInstruction(short instruction, short destROB){
 		issueInstructionSourceRegister1(InstructionDecoder.getRS(instruction));
 		setBusy();
-		this.destROB = destROB;
+		this.setDestROB(destROB);
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setType(InstructionDecoder.getOpcode(instruction));
 		ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setReady(false);
 	}
@@ -38,16 +36,14 @@ public abstract class ReservationStation {
 		if(ProcessorBuilder.getProcessor().getRegisterStatus(rs) != VALID){
 			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterStatus(rs));
 			if(ROBEntry.isReady()){
-				this.Vj = ROBEntry.getValue();
-				this.Qj = 0;
+				this.setVj(ROBEntry.getValue());
 			}
 			else{
-				this.Qj = ProcessorBuilder.getProcessor().getRegisterStatus(rs);
+				this.setQj(ProcessorBuilder.getProcessor().getRegisterStatus(rs));
 			}
 		}
 		else{
-			this.Vj = ProcessorBuilder.getProcessor().getRegisterValue(rs);
-			this.Qj = 0;
+			this.setVj(ProcessorBuilder.getProcessor().getRegisterValue(rs));
 		}
 	}
 
@@ -56,16 +52,14 @@ public abstract class ReservationStation {
 		if(ProcessorBuilder.getProcessor().getRegisterStatus(rt) != VALID){
 			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterStatus(rt));
 			if(ROBEntry.isReady()){
-				this.Vk = ROBEntry.getValue();
-				this.Qk = 0;
+				this.setVk(ROBEntry.getValue());
 			}
 			else{
-				this.Qk = ProcessorBuilder.getProcessor().getRegisterStatus(rt);
+				this.setQk(ProcessorBuilder.getProcessor().getRegisterStatus(rt));
 			}
 		}
 		else{
-			this.Vk = ProcessorBuilder.getProcessor().getRegisterValue(rt);
-			this.Qk = 0;
+			this.setVk(ProcessorBuilder.getProcessor().getRegisterValue(rt));
 		}
 	}
 
@@ -77,16 +71,40 @@ public abstract class ReservationStation {
 		return busy;
 	}
 	
-	public void setBusy() { 
+	public void setBusy() {
+		if(tempRS != null) {
+			tempRS.setBusy();
+			return;
+		}
 		busy = true;
 	}
 	
 	public void clearBusy() {
+		if(tempRS != null) {
+			tempRS.clearBusy();
+			return;
+		}
 		busy = false;
 	}
 	
 	public short getQj(){
 		return Qj;
+	}
+	
+	public void setQj(short value) {
+		if(tempRS != null) {
+			tempRS.setQj(value);
+			return;
+		}
+		Qj = 0;
+	}
+	
+	public void setQk(short value) {
+		if(tempRS != null) {
+			tempRS.setQk(value);
+			return;
+		}
+		Qk = 0;
 	}
 	
 	public short getQk(){
@@ -98,6 +116,10 @@ public abstract class ReservationStation {
 	}
 	
 	public void setVj(short value){
+		if(tempRS != null) {
+			tempRS.setVj(value);
+			return;
+		}
 		Vj = value;
 		Qj = 0;
 	}
@@ -107,6 +129,10 @@ public abstract class ReservationStation {
 	}
 	
 	public void setVk(short value){
+		if(tempRS != null) {
+			tempRS.setVk(value);
+			return;
+		}
 		Vk = value;
 		Qk = 0;
 	}
@@ -115,15 +141,31 @@ public abstract class ReservationStation {
 		return destROB;
 	}
 	
+	private void setDestROB(short value) {
+		if(tempRS != null) {
+			tempRS.setDestROB(value);
+			return;
+		}
+		destROB = value;
+	}
+	
 	public short getAddress() {
 		return address;
 	}
 	
 	public void setAddress(short value) {
+		if(tempRS != null) {
+			tempRS.setAddress(value);
+			return;
+		}
 		address = value;
 	}
 	
 	public void setTempReservationStation(ReservationStation rs) {
 		tempRS = rs;
+	}
+	
+	public void flush() {
+		
 	}
 }
