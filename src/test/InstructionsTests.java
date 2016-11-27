@@ -428,4 +428,38 @@ public class InstructionsTests {
 		
 		TestsInitializer.clean();
 	}
+	
+	@Test
+	public void testJMP() throws FileNotFoundException {
+		ArrayList<String> program = new ArrayList<String>();
+		program.add("ADDI r7, r7, 1");
+		program.add("ADDI r2, r2, 5");
+		program.add("ADDI r3, r3, 7");
+		program.add("JMP r7 1");
+		program.add("SUB r2, r3, r2");
+		program.add("ADDI r2, r2, 20");
+		program.add("SW r2, r0, 15");
+		program.add("LW r5, r0, 15");
+		
+		TestsInitializer.initGivenAssembly(program);
+		TestsInitializer.initUserInput2();
+				
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		Processor processor = ProcessorBuilder.getProcessor();
+		
+		for(int i = 0; i < 100; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				5,
+				processor.getRegisterFile().getRegisterValue((byte) 2));
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				5,
+				processor.getRegisterFile().getRegisterValue((byte) 5));
+		
+		TestsInitializer.clean();
+	}
 }
