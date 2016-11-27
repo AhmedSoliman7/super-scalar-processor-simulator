@@ -16,7 +16,7 @@ public enum ReservationStationType {
 		return index;
 	}
 	
-	public static ReservationStationType getType(short instruction){		//TODO functional unit (type) of JMP
+	public static ReservationStationType getType(short instruction){
 		
 		byte opcode = InstructionDecoder.getOpcode(instruction);
 		switch (opcode) {
@@ -33,7 +33,7 @@ public enum ReservationStationType {
 			return LOAD;
 		case 2:
 			return STORE;
-		default:
+		default:				//JMP, JALR, RET
 			return ADD;
 		}
 		

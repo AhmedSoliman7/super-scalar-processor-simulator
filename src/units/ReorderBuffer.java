@@ -37,16 +37,17 @@ public class ReorderBuffer {
 		return entries[index];
 	}
 
-	public void commit() {			//TODO handle JMP, JALR, RET
+	public void commit() {
 		if(!isEmpty() && entries[head].isReady()){
 			ReorderBufferEntry robHead = entries[head]; 
-			if(robHead.getInstructionType() == InstructionType.BEQ) {
-				if(robHead.getValue() == 0){				// misprediction
+			InstructionType type = robHead.getInstructionType(); 
+			if(type == InstructionType.BEQ || type == InstructionType.JMP || type == InstructionType.RET) {
+				if(robHead.getValue() == 0){
 					ProcessorBuilder.getProcessor().clear();
 					ProcessorBuilder.getProcessor().updatePC(robHead.getDestination());
 				}
 			}
-			else if(robHead.getInstructionType() == InstructionType.STORE) {
+			else if(type == InstructionType.STORE) {
 				if(writingCounter > 0) {
 					writingCounter--;
 					return;

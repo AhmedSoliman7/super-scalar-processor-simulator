@@ -1,5 +1,6 @@
 package units;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -15,7 +16,7 @@ public class Processor {
 	private ReorderBuffer ROB;				
 	private MemoryHandler memoryUnit;
 	private RegisterFile registerFile;
-	private Queue<InstructionPair<Short>> instructionQueue;				
+	private Deque<InstructionPair<Short>> instructionQueue;				
 	private int instructionQueueMaxSize;
 	private int pipelineWidth;							
 	private int[] firstReservationStation;
@@ -97,6 +98,12 @@ public class Processor {
 	private void issueInstructions(){
 		mainLoop: for(int i = 0; i < pipelineWidth && !instructionQueue.isEmpty() && !getROB().isFull(); ++i){
 			InstructionPair<Short> instructionPair = instructionQueue.peek();
+			if(InstructionType.getInstructionType(instructionPair.getInstruction()) == InstructionType.JALR) {
+				instructionQueue.poll();
+				short jalrAddress = instructionPair.getAddress();
+				instructionQueue.addFirst(new InstructionPair<Short>(getADDIforJALR(instructionPair.getInstruction(), jalrAddress), jalrAddress));
+				instructionQueue.addFirst(new InstructionPair<Short>(getRETforJALR(instructionPair.getInstruction()), jalrAddress));
+			}
 			ReservationStationType currentType = ReservationStationType.getType(instructionPair.getInstruction());
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
 				
@@ -110,6 +117,20 @@ public class Processor {
 			}
 			break;
 		}
+	}
+
+	private short getADDIforJALR(short instruction, short address) {
+		short opcode = 3;
+		short rs = 0;
+		short rt = InstructionDecoder.getRS(instruction);
+		short imm = (short) (address + 1);
+		return (short) (opcode << 13 | rs << 10 | rt << 7 | imm);
+	}
+
+	private short getRETforJALR(short instruction) {
+		short opcode = 7;
+		short rs = InstructionDecoder.getRT(instruction);
+		return (short) (opcode << 13 | rs << 10);
 	}
 
 	private void executeInstructions(){
@@ -225,5 +246,4 @@ public class Processor {
 	public void setReadyValue(short readyValue) {
 		this.readyValue = readyValue;
 	}
-
 }
