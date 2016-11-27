@@ -23,6 +23,12 @@ public class AddReservationStation extends IntOpernationReservationStation {
 		case BEQ:
 			short diff = (short) (this.getVj() - this.getVk());
 			return predictionResult(diff, this.getAddress());
+		case JMP:
+			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination((short) (this.getVj() + this.getVk()));
+			return 0;
+		case RET:
+			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination(this.getVj());
+			return 0;
 		default:
 			throw new RuntimeException("Error! Unknown operation type in ADD reservation station.");
 		}

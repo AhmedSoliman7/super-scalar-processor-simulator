@@ -10,23 +10,29 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 	public void issueInstruction(short instruction, short instructionAddress, short destROB) {
 		super.issueInstruction(instruction, instructionAddress, destROB);
 		InstructionType opType = this.getOperationType();
-		if(opType != InstructionType.ADDI) {
-			super.issueInstructionSourceRegister2(InstructionDecoder.getRT(instruction));
-		}
-		else {
+		if(opType == InstructionType.ADDI) {
 			this.setVk(InstructionDecoder.getImmediate(instruction));
 		}
-		
-		if(opType != InstructionType.BEQ) {
-			byte destRegister = opType == InstructionType.ADDI ? InstructionDecoder.getRT(instruction) : InstructionDecoder.getRD(instruction);
-			ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus(destRegister, destROB);
-			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(destRegister);						
+		else if(opType == InstructionType.JMP) {
+			this.setVk((short) (InstructionDecoder.getImmediate(instruction) + 1 + this.getInstructionAddress()));
+		}
+		else if(opType == InstructionType.RET){
+			this.setQk(READY);
 		}
 		else {
+			super.issueInstructionSourceRegister2(InstructionDecoder.getRT(instruction));
+		}
+		
+		if(opType == InstructionType.BEQ){
 			short imm = InstructionDecoder.getImmediate(instruction);
 			this.setAddress(imm);
 			short effectiveAddress = (short) (imm + 1 + this.getInstructionAddress());
 			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(effectiveAddress);
+		}
+		else if(opType != InstructionType.JMP && opType != InstructionType.RET)  {
+			byte destRegister = opType == InstructionType.ADDI ? InstructionDecoder.getRT(instruction) : InstructionDecoder.getRD(instruction);
+			ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus(destRegister, destROB);
+			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(destRegister);						
 		}
 	}
 
