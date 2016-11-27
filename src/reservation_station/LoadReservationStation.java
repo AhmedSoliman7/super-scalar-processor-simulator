@@ -22,8 +22,8 @@ public class LoadReservationStation extends ReservationStation {
 	}
 
 	@Override
-	public void issueInstruction(short instruction, short destROB) {
-		super.issueInstruction(instruction, destROB);
+	public void issueInstruction(short instruction, short instructionAddress, short destROB) {
+		super.issueInstruction(instruction, instructionAddress, destROB);
 		this.setAddress(InstructionDecoder.getImmediate(instruction));
 		byte rt = InstructionDecoder.getRT(instruction);
 		ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus(rt, destROB);

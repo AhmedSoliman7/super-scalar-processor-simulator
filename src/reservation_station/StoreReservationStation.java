@@ -13,8 +13,8 @@ public class StoreReservationStation extends ReservationStation {
 	}
 
 	@Override
-	public void issueInstruction(short instruction, short destROB) {
-		super.issueInstruction(instruction, destROB);
+	public void issueInstruction(short instruction, short instructionAddress, short destROB) {
+		super.issueInstruction(instruction, instructionAddress, destROB);
 		super.issueInstructionSourceRegister2(InstructionDecoder.getRT(instruction));
 		this.setAddress(InstructionDecoder.getImmediate(instruction));
 	}

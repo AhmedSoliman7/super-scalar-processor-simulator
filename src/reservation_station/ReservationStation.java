@@ -9,6 +9,7 @@ public abstract class ReservationStation {
 
 	protected static final short VALID = -1, READY = -1;
 	private InstructionType opType;
+	private short instructionAddress;
 	private short Qj, Qk, Vj, Vk, destROB, address;
 	private boolean busy;
 	private ReservationStation tempRS;
@@ -28,8 +29,9 @@ public abstract class ReservationStation {
 		}
 	}
 
-	public void issueInstruction(short instruction, short destROB){
+	public void issueInstruction(short instruction, short instructionAddress, short destROB){
 		this.setOperationType(InstructionType.getInstructionType(instruction));
+		this.setInstructionAddress(instructionAddress);
 		this.issueInstructionSourceRegister1(InstructionDecoder.getRS(instruction));
 		this.setBusy();
 		this.setDestROB(destROB);
@@ -237,5 +239,13 @@ public abstract class ReservationStation {
 	
 	private void setOperationType(InstructionType type) {
 		this.opType = type;
+	}
+	
+	public void setInstructionAddress(short address) {
+		this.instructionAddress = address; 
+	}
+	
+	public short getInstructionAddress() {
+		return instructionAddress;
 	}
 }
