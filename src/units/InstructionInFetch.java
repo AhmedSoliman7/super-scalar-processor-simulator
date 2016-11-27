@@ -1,11 +1,11 @@
 package units;
 
 public class InstructionInFetch {
-	private short instruction;
+	private InstructionPair<Short> instructionPair;
 	private short remainingCycles;
 	
-	public InstructionInFetch(short instruction, short cycles) {
-		this.instruction = instruction;
+	public InstructionInFetch(short instruction, short instructionAddress, short cycles) {
+		this.instructionPair = new InstructionPair<Short>(instruction, instructionAddress);
 		this.remainingCycles = cycles;
 	}
 	
@@ -19,7 +19,7 @@ public class InstructionInFetch {
 		}
 	}
 	
-	public short getInstruction() {
-		return this.instruction;
+	public InstructionPair<Short> getInstruction() {
+		return instructionPair;
 	}
 }

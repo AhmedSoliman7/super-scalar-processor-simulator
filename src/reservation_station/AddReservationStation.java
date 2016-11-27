@@ -1,5 +1,6 @@
 package reservation_station;
 
+import main.ProcessorBuilder;
 import units.InstructionType;
 
 public class AddReservationStation extends IntOpernationReservationStation {
@@ -21,7 +22,7 @@ public class AddReservationStation extends IntOpernationReservationStation {
 			return (short) (this.getVj() - this.getVk());
 		case BEQ:
 			short diff = (short) (this.getVj() - this.getVk());
-			return predictionResult(diff, this.getAddress());	//1 for success, 0 for misprediction			
+			return predictionResult(diff, this.getAddress());
 		default:
 			throw new RuntimeException("Error! Unknown operation type in ADD reservation station.");
 		}
@@ -37,8 +38,12 @@ public class AddReservationStation extends IntOpernationReservationStation {
 	}
 	
 	private short predictionResult(short diff, short address) {
+		
 		if(diff == 0 && address >= 0 || diff != 0 && address < 0)
-			return 1;
-		return 0;
+			return 1;												//correct branch prediction					
+		if(address >= 0) {
+			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination((short) (this.getInstructionAddress() + 1));
+		}
+		return 1;
 	}
 }

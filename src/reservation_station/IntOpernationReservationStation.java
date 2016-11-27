@@ -7,8 +7,8 @@ import units.InstructionType;
 public abstract class IntOpernationReservationStation extends ReservationStation {
 
 	@Override
-	public void issueInstruction(short instruction, short destROB) {
-		super.issueInstruction(instruction, destROB);
+	public void issueInstruction(short instruction, short instructionAddress, short destROB) {
+		super.issueInstruction(instruction, instructionAddress, destROB);
 		InstructionType opType = this.getOperationType();
 		if(opType != InstructionType.ADDI) {
 			super.issueInstructionSourceRegister2(InstructionDecoder.getRT(instruction));
@@ -25,7 +25,7 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 		else {
 			short imm = InstructionDecoder.getImmediate(instruction);
 			this.setAddress(imm);
-			short effectiveAddress = imm;	//TODO add 1 + address of current instruction in memory
+			short effectiveAddress = (short) (imm + 1 + this.getInstructionAddress());
 			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(effectiveAddress);
 		}
 	}

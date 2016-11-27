@@ -41,11 +41,9 @@ public class ReorderBuffer {
 		if(!isEmpty() && entries[head].isReady()){
 			ReorderBufferEntry robHead = entries[head]; 
 			if(robHead.getInstructionType() == InstructionType.BEQ) {
-
-				if(robHead.getValue() == 0){			// misprediction TODO complete clearing
+				if(robHead.getValue() == 0){				// misprediction
 					ProcessorBuilder.getProcessor().clear();
-					
-					//fetch correct branch
+					ProcessorBuilder.getProcessor().updatePC(robHead.getDestination());
 				}
 			}
 			else if(robHead.getInstructionType() == InstructionType.STORE) {

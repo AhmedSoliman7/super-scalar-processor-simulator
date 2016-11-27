@@ -1,6 +1,5 @@
 package units;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -11,18 +10,12 @@ import reservation_station.ReservationStationState;
 import reservation_station.ReservationStationType;
 
 public class Processor {
-
-	/*
-	 * TODO
-	 * Unconditional => predicated as taken
-	 * Conditional => taken for +ve offset and not taken otherwise
-	 * 
-	 */
+	
 	private ReservationStation[] reservationStations;	
 	private ReorderBuffer ROB;				
 	private MemoryHandler memoryUnit;
 	private RegisterFile registerFile;
-	private Queue<Short> instructionQueue;				
+	private Queue<InstructionPair<Short>> instructionQueue;				
 	private int instructionQueueMaxSize;
 	private int pipelineWidth;							
 	private int[] firstReservationStation;
@@ -36,7 +29,7 @@ public class Processor {
 	public Processor(){
 		countReservationStation = new int[5];
 		registerFile = new RegisterFile(8, true);
-		instructionQueue = new LinkedList<Short>();
+		instructionQueue = new LinkedList<>();
 		timer = 0;
 	}
 	
@@ -67,8 +60,23 @@ public class Processor {
 			instructionQueue.add(instructionInFetch.getInstruction());
 		}
 		
-		ReturnPair<Short> instructionPair = memoryUnit.fetchInstruction(PC++);
-		instructionInFetch = new InstructionInFetch(instructionPair.value, (short) (instructionPair.clockCycles - 1));
+		ReturnPair<Short> instructionPair = memoryUnit.fetchInstruction(PC);
+		instructionInFetch = new InstructionInFetch(instructionPair.value, PC, (short) (instructionPair.clockCycles - 1));
+		incrementPC(instructionPair.value);		
+	}
+	
+	private void incrementPC(short instruction) {
+		PC++;
+		if(InstructionType.getInstructionType(instruction) == InstructionType.BEQ) {
+			short offset = InstructionDecoder.getImmediate(instruction);
+			if(offset >= 0) {
+				PC += offset;
+			}	
+		}
+	}
+	
+	public void updatePC(short newAddress) {
+		PC = newAddress;
 	}
 
 	public void prepareReservationStations(){
@@ -88,12 +96,12 @@ public class Processor {
 
 	private void issueInstructions(){
 		mainLoop: for(int i = 0; i < pipelineWidth && !instructionQueue.isEmpty() && !getROB().isFull(); ++i){
-			short currentInstruction = instructionQueue.peek();
-			ReservationStationType currentType = ReservationStationType.getType(currentInstruction);
+			InstructionPair<Short> instructionPair = instructionQueue.peek();
+			ReservationStationType currentType = ReservationStationType.getType(instructionPair.getInstruction());
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
 				
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
-					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().nextEntryIndex());
+					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(instructionPair.getInstruction(), instructionPair.getAddress(), getROB().nextEntryIndex());
 					instructionQueue.poll();
 					reservationStations[firstReservationStation[typeIndex] + j].setStartTime(timer);
 					
@@ -194,7 +202,7 @@ public class Processor {
 		return instructionInFetch;
 	}
 	
-	public Queue<Short> getInstructionQueue() {
+	public Queue<InstructionPair<Short>> getInstructionQueue() {
 		return instructionQueue;
 	}
 
