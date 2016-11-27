@@ -56,10 +56,6 @@ public class MemoryHandler {
 		return instructionCaches[0].fetch(address);
 	}
 	
-	public Cache[] getInstructionCaches() {
-		return instructionCaches;
-	}
-
 	public Cache[] getDataCaches() {
 		return dataCaches;
 	}

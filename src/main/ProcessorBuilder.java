@@ -155,8 +155,4 @@ public class ProcessorBuilder {
 			processor = buildProcessor(System.in);
 		return processor;
 	}
-	
-	public static void main(String[] args) {
-		Processor p = new ProcessorBuilder().buildProcessor(System.in);
-	}
 }
