@@ -31,7 +31,7 @@ public class RegisterFile {
 	
 	public void setRegisterValue(byte register, short value) {
 		if(tempRegisterFile != null) {
-			tempRegisterFile.setRegisterStatus(register, value);
+			tempRegisterFile.setRegisterValue(register, value);
 			return;
 		}
 		registers[register] = value;

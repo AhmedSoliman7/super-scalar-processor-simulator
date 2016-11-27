@@ -1,5 +1,6 @@
 package units;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -28,17 +29,19 @@ public class Processor {
 	private int[] countReservationStation;
 	private short PC;
 	private InstructionInFetch instructionInFetch;
+	private byte readyRegister;
+	private short readyValue;
 	private int timer;
 
 	public Processor(){
 		countReservationStation = new int[5];
 		registerFile = new RegisterFile(8, true);
 		instructionQueue = new LinkedList<Short>();
-		prepareReservationStations();
 		timer = 0;
 	}
 	
 	public void runClockCycle() {
+		readyRegister = -1;
 		commitInstructions();
 		writeResultInstructions();
 		executeInstructions();
@@ -48,7 +51,7 @@ public class Processor {
 		this.flush();
 		timer++;
 	}
-	
+
 	public void fetchInstruction() {
 		if(instructionQueue.size() == instructionQueueMaxSize) {
 			return;
@@ -68,7 +71,7 @@ public class Processor {
 		instructionInFetch = new InstructionInFetch(instructionPair.value, (short) (instructionPair.clockCycles - 1));
 	}
 
-	private void prepareReservationStations(){
+	public void prepareReservationStations(){
 		int totalRS = 0;
 		firstReservationStation = new int[5];
 		for(int i = 0; i < 5; i++){
@@ -88,6 +91,7 @@ public class Processor {
 			short currentInstruction = instructionQueue.peek();
 			ReservationStationType currentType = ReservationStationType.getType(currentInstruction);
 			for(int typeIndex = currentType.getValue(), j = 0; j < countReservationStation[typeIndex]; ++j){
+				
 				if(!reservationStations[firstReservationStation[typeIndex] + j].isBusy()){
 					reservationStations[firstReservationStation[typeIndex] + j].issueInstruction(currentInstruction, getROB().nextEntryIndex());
 					instructionQueue.poll();
@@ -193,4 +197,25 @@ public class Processor {
 	public Queue<Short> getInstructionQueue() {
 		return instructionQueue;
 	}
+
+	public short getPC() {
+		return this.PC;
+	}
+	
+	public byte getReadyRegister() {
+		return readyRegister;
+	}
+
+	public void setReadyRegister(byte readyRegister) {
+		this.readyRegister = readyRegister;
+	}
+	
+	public short getReadyValue() {
+		return readyValue;
+	}
+
+	public void setReadyValue(short readyValue) {
+		this.readyValue = readyValue;
+	}
+
 }

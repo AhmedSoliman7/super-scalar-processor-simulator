@@ -80,8 +80,11 @@ public class ReorderBuffer {
 	}
 	
 	public boolean findMatchingStoreAddress(short address, short end){
-		for(short i = head; i != end; i = (short)((i + 1) % maxSize)){
-			if(entries[i].getInstructionType() == InstructionType.STORE && entries[i].getDestination() == address){
+		for(short i = 0; i < countEntries; i++){
+			short idx = (short) ((head + i) % maxSize);
+			if(idx == end)
+				break;
+			if(entries[idx].getInstructionType() == InstructionType.STORE && entries[idx].getDestination() == address){
 				return true;
 			}
 		}
@@ -89,8 +92,10 @@ public class ReorderBuffer {
 	}
 	
 	public void flush() {
-		for(int i = head; i != tail;  i = (short)((i + 1) % maxSize)) {
-			entries[i].flush();
+		for(short i = 0; i < countEntries; i++){
+			short idx = (short) ((head + i) % maxSize);
+			
+			entries[idx].flush();
 		}
 	}
 }

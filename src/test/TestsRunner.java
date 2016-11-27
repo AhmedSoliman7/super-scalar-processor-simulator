@@ -9,7 +9,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	MemoryTests.class,
 	ParserTests.class,
 	ProcessorBuilderTests.class,
-	ProcessorTests.class})
+	ProcessorTests.class,
+	InstructionsTests.class})
 public class TestsRunner {
 
 }

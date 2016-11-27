@@ -2,21 +2,26 @@ package test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
 import main.ProcessorBuilder;
+import reservation_station.LoadReservationStation;
+import reservation_station.ReservationStationState;
+import units.Processor;
+import units.ReorderBufferEntry;
 
 public class ProcessorTests {
 
+	static final String USR_FILE_NAME = "testFile.usr";
+	
 	@Test
 	public void testInstructionFetch() throws Exception {
-		initAssembly();
-		initUserInput();
+		TestsInitializer.initAssembly();
+		TestsInitializer.initUserInput();
 
 		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
 		
@@ -49,62 +54,333 @@ public class ProcessorTests {
 				2,
 				ProcessorBuilder.getProcessor().getInstructionQueue().size());
 		
-		clean();
+		TestsInitializer.clean();
 	}
 	
-	static final String ASM_FILE_NAME = "testFile.asm";
-	static final String USR_FILE_NAME = "testFile.usr";
-	
-	void initAssembly() throws FileNotFoundException {
-		PrintWriter out = new PrintWriter(ASM_FILE_NAME);
+	@Test
+	public void testInstructionCycle() throws FileNotFoundException {
+		TestsInitializer.initAssembly2();
+		TestsInitializer.initUserInput2();
+		
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		Processor processor = ProcessorBuilder.getProcessor();
+		
+		assertEquals(
+				"PC should be pointing to first instruction",
+				100,
+				processor.getPC());
+		
+		for(int i = 0; i < 5; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				"PC should be pointing to second instruction",
+				101,
+				processor.getPC());
+		
+		assertEquals(
+				"Instruction queue should be still empty.",
+				0,
+				processor.getInstructionQueue().size());
+		
+		processor.runClockCycle();
+		
+		assertEquals(
+				"Instruction queue should have first instruction in the queue.",
+				1,
+				processor.getInstructionQueue().size());
+		
+		assertEquals(
+				"PC should be pointing to third instruction",
+				102,
+				processor.getPC());
+		
+		LoadReservationStation lrs = (LoadReservationStation) processor.getReservationStations()[0];
+		
+		assertEquals(
+				"The load reservation station should be still free.",
+				false,
+				lrs.isBusy());
+		
+		// clock cycle 7
+		processor.runClockCycle();
+		
+		assertEquals(
+				"PC should be pointing to third instruction",
+				103,
+				processor.getPC());
+		
+		assertEquals(
+				"Instruction queue should still have instruction in the queue.",
+				1,
+				processor.getInstructionQueue().size());
+		
+		
+		assertEquals(
+				"The load reservation station should be busy.",
+				true,
+				lrs.isBusy());
+		
+		assertEquals(
+				"There should be no ROB taking the LRS.",
+				-1,
+				lrs.getQj());
+		
+		assertEquals(
+				"The base address is ready.",
+				0,
+				lrs.getVj());
+		
+		assertEquals(
+				"The base address is ready.",
+				32,
+				lrs.getAddress());
+		
+		assertEquals(
+				"the LRS should be in EXEC state.",
+				ReservationStationState.EXEC,
+				lrs.getState());
+		
+		assertEquals(
+				"the LRS start time should be 6.",
+				6,
+				lrs.getStartTime());
+		
+		ReorderBufferEntry ROBentry = processor.getROB().getEntry(0);
+		
+		assertEquals(
+				6,
+				ROBentry.getDestination());
+		
+		assertEquals(
+				0,
+				processor.getRegisterFile().getRegisterStatus((byte) 6));
+		
+		// clock cycle 8
+		processor.runClockCycle();
+		
+		// clock cycle 9
+		processor.runClockCycle();
+		
+		// clock cycle 10
+		processor.runClockCycle();
+		
+		// clock cycle 11
+		processor.runClockCycle();
+		
+		// clock cycle 12
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT reservation station should be still free.",
+				false,
+				processor.getReservationStations()[6].isBusy());
+		
+		// clock cycle 13
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT issue in cycle 13.",
+				true,
+				processor.getReservationStations()[6].isBusy());
+		
+		assertEquals(
+				"The LOAD should begin writing in cycle 13.",
+				ReservationStationState.WRITE,
+				lrs.getState());
+		
+		assertEquals(
+				"The second LOAD should be in EXEC in cycle 13",
+				ReservationStationState.EXEC,
+				processor.getReservationStations()[1].getState());
+		
+		// clock cycle 14
+		processor.runClockCycle();
+		
+		assertEquals(
+				ReservationStationState.COMMIT,
+				lrs.getState());
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[1].getState());
+		
+		assertEquals(
+				false,
+				lrs.isBusy());
+		
+		assertEquals(
+				true,
+				ROBentry.isReady());
+		
+		assertEquals(
+				2,
+				ROBentry.getValue());
+		
+		assertEquals(
+				0,
+				processor.getRegisterFile().getRegisterValue((byte) 6));
+		
+		assertEquals(
+				0,
+				processor.getRegisterFile().getRegisterStatus((byte) 6));
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
+				-1,
+				processor.getReservationStations()[6].getQk());
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
+				1,
+				processor.getReservationStations()[6].getQj());
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 15.",
+				-1,
+				processor.getReservationStations()[6].getQk());
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 15.",
+				-1,
+				processor.getReservationStations()[4].getQk());
+		
+		//clock cycle 15
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 15.",
+				-1,
+				processor.getReservationStations()[6].getQj());
+		
+		
+		assertEquals(
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[1].getState());
+		
+		assertEquals(
+				2,
+				processor.getRegisterFile().getRegisterValue((byte) 6));
+		
+		assertEquals(
+				-1,
+				processor.getRegisterFile().getRegisterStatus((byte) 6));
+		
+		//clock cycle 16
+		processor.runClockCycle();
+		
+		assertEquals(
+				3,
+				processor.getRegisterFile().getRegisterValue((byte) 2));
+		
+		assertEquals(
+				-1,
+				processor.getRegisterFile().getRegisterStatus((byte) 2));
+		
+		assertEquals(
+				2,
+				processor.getRegisterFile().getRegisterStatus((byte) 3));
+		
+		
+		//clock cycle 17
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
+				-1,
+				processor.getReservationStations()[6].getQj());
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[6].getState());
+		
+		//clock cycle 18
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[6].getState());
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				0,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		//clock cycle 19
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				6,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		//clock cycle 20
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				-1,
+				processor.getRegisterFile().getRegisterStatus((byte) 3));
+		
+		assertEquals(
+				-1,
+				processor.getReservationStations()[4].getQj());
+		
+		assertEquals(
+				-1,
+				processor.getReservationStations()[4].getQk());
+		
+		assertEquals(
+				"The SUB should finish the EXEC by cycle 21.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				0,
+				processor.getROB().getEntry(3).getValue());
+				
+		//clock cycle 21
+		processor.runClockCycle();
+		
+		assertEquals(
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				4,
+				processor.getROB().getEntry(3).getValue());
+		
+		//clock cycle 22
+		processor.runClockCycle();
+				
+		
+		
+		assertEquals(
+				3,
+				processor.getRegisterFile().getRegisterValue((byte) 2));
+		
+		assertEquals(
+				6,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		for(int i = 0; i < 6; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				28,
+				processor.getRegisterFile().getRegisterValue((byte) 4));
 
-		out.println("ADD r1,r2 r7");
-		out.println("SuB R7, r6 4");
-		out.println("NAND r1, r5, r3");
-		out.println("MULT r7, r7, r7");
-		out.println("LW r6, r7, 32");
-		out.println("SW r1, r6, -16");
-		out.println("ADDI r2, r1, 15");
-		out.println("beq r7, r5, 4");
-		out.println("jmp r2, 13");
-		out.println("JALR r1, r2");
-		out.println("RET r1");
+		assertEquals(
+				24,			
+				processor.getRegisterFile().getRegisterValue((byte) 6));
 
-		out.flush();
-		out.close();
-	}
+		assertEquals(
+				4,
+				processor.getRegisterFile().getRegisterValue((byte) 7));
 
-	void initUserInput() throws FileNotFoundException {
-		PrintWriter out = new PrintWriter(USR_FILE_NAME);
-
-		out.println("3");
-		out.println("10");
-		out.println("4 2 1 0 1");
-		out.println("8 2 2 0 3");
-		out.println("16 4 4 0 5");
-		out.println("2");
-		out.println("5");
-		out.println("5");
-		out.println("1 2");
-		out.println("1 2");
-		out.println("1 2");
-		out.println("1 2");
-		out.println("1 2");
-		out.println(ASM_FILE_NAME);
-		out.println("100");
-		out.println("20");
-		for(int i = 0; i < 20; i++)
-			out.printf("%d %d\n", i, i + 1);
-
-		out.flush();
-		out.close();
-	}
-
-	void clean() {
-		File file = new File(ASM_FILE_NAME);
-		file.delete();
-
-		file = new File(USR_FILE_NAME);
-		file.delete();
+		TestsInitializer.clean();
 	}
 }
