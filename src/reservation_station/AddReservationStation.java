@@ -44,6 +44,6 @@ public class AddReservationStation extends IntOpernationReservationStation {
 		if(address >= 0) {
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination((short) (this.getInstructionAddress() + 1));
 		}
-		return 1;
+		return 0;
 	}
 }
