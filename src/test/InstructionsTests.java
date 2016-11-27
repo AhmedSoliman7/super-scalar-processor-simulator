@@ -24,7 +24,7 @@ public class InstructionsTests {
 		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
 		Processor processor = ProcessorBuilder.getProcessor();
 		
-		for(int i = 0; i < 100; i++)
+		for(int i = 0; i < 11; i++)
 			processor.runClockCycle();
 		
 		assertEquals(
@@ -167,7 +167,7 @@ public class InstructionsTests {
 		
 		processor.getMemoryUnit().getMainMemory().getData()[0] = 100;
 		
-		for(int i = 0; i < 100; i++)
+		for(int i = 0; i < 18; i++)
 			processor.runClockCycle();
 		
 		assertEquals(
