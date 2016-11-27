@@ -29,6 +29,8 @@ public class Processor {
 	private int[] countReservationStation;
 	private short PC;
 	private InstructionInFetch instructionInFetch;
+	private byte readyRegister;
+	private short readyValue;
 	private int timer;
 
 	public Processor(){
@@ -39,6 +41,7 @@ public class Processor {
 	}
 	
 	public void runClockCycle() {
+		readyRegister = -1;
 		commitInstructions();
 		writeResultInstructions();
 		executeInstructions();
@@ -48,7 +51,7 @@ public class Processor {
 		this.flush();
 		timer++;
 	}
-	
+
 	public void fetchInstruction() {
 		if(instructionQueue.size() == instructionQueueMaxSize) {
 			return;
@@ -198,4 +201,21 @@ public class Processor {
 	public short getPC() {
 		return this.PC;
 	}
+	
+	public byte getReadyRegister() {
+		return readyRegister;
+	}
+
+	public void setReadyRegister(byte readyRegister) {
+		this.readyRegister = readyRegister;
+	}
+	
+	public short getReadyValue() {
+		return readyValue;
+	}
+
+	public void setReadyValue(short readyValue) {
+		this.readyValue = readyValue;
+	}
+
 }

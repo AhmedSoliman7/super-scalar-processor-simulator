@@ -43,8 +43,13 @@ public abstract class ReservationStation {
 
 		if(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rs) != VALID){
 			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rs));
-			if(ROBEntry.isReady()){
-				this.setVj(ROBEntry.getValue());
+			if(ROBEntry.isReady() || ProcessorBuilder.getProcessor().getReadyRegister() == rs){
+				if(!ROBEntry.isReady()) {
+					this.setVj(ProcessorBuilder.getProcessor().getReadyValue());
+				}
+				else {
+					this.setVj(ROBEntry.getValue());
+				}
 			}
 			else{
 				this.setQj(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rs));
@@ -59,8 +64,13 @@ public abstract class ReservationStation {
 
 		if(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rt) != VALID){
 			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rt));
-			if(ROBEntry.isReady()){
-				this.setVk(ROBEntry.getValue());
+			if(ROBEntry.isReady() || ProcessorBuilder.getProcessor().getReadyRegister() == rt){
+				if(!ROBEntry.isReady()) {
+					this.setVk(ProcessorBuilder.getProcessor().getReadyValue());
+				}
+				else {
+					this.setVk(ROBEntry.getValue());
+				}
 			}
 			else{
 				this.setQk(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rt));
@@ -114,6 +124,7 @@ public abstract class ReservationStation {
 	public void setQj(short value) {
 		if(tempRS != null) {
 			tempRS.setQj(value);
+			
 			return;
 		}
 		Qj = value;

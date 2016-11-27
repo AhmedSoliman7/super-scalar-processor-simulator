@@ -48,7 +48,17 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 		short result = calculate();
 		passToOtherReservationStations(result);
 		ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(result);
+		
+		passToOtherReservationStations(result);
+		
+		byte destRegister = (byte) ProcessorBuilder.getProcessor()
+				.getROB()
+				.getEntry(this.getDestROB())
+				.getDestination();
 
+		ProcessorBuilder.getProcessor().setReadyRegister(destRegister);
+		ProcessorBuilder.getProcessor().setReadyValue(result);
+		
 		this.setState(ReservationStationState.COMMIT);
 		this.clearBusy();
 	}

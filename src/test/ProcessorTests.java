@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -94,6 +95,14 @@ public class ProcessorTests {
 				102,
 				processor.getPC());
 		
+		LoadReservationStation lrs = (LoadReservationStation) processor.getReservationStations()[0];
+		
+		assertEquals(
+				"The load reservation station should be still free.",
+				false,
+				lrs.isBusy());
+		
+		// clock cycle 7
 		processor.runClockCycle();
 		
 		assertEquals(
@@ -106,7 +115,6 @@ public class ProcessorTests {
 				1,
 				processor.getInstructionQueue().size());
 		
-		LoadReservationStation lrs = (LoadReservationStation) processor.getReservationStations()[0];
 		
 		assertEquals(
 				"The load reservation station should be busy.",
@@ -148,40 +156,45 @@ public class ProcessorTests {
 				0,
 				processor.getRegisterFile().getRegisterStatus((byte) 6));
 		
+		// clock cycle 8
 		processor.runClockCycle();
 		
-		// TODO I1 starting exec, I2 issuing
-		
+		// clock cycle 9
 		processor.runClockCycle();
 		
-		// TODO I1 exec, I2 exec
-		
+		// clock cycle 10
 		processor.runClockCycle();
 		
-		// TODO I1 exec, I2 exec
-		
+		// clock cycle 11
 		processor.runClockCycle();
 		
-		// TODO I1 exec, I2 exec
-		
-		processor.runClockCycle();
-		
-		// TODO I1 exec, I2 exec
-		
+		// clock cycle 12
 		processor.runClockCycle();
 		
 		assertEquals(
+				"The MULT reservation station should be still free.",
+				false,
+				processor.getReservationStations()[6].isBusy());
+		
+		// clock cycle 13
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT issue in cycle 13.",
+				true,
+				processor.getReservationStations()[6].isBusy());
+		
+		assertEquals(
+				"The LOAD should begin writing in cycle 13.",
 				ReservationStationState.WRITE,
 				lrs.getState());
 		
 		assertEquals(
+				"The second LOAD should be in EXEC in cycle 13",
 				ReservationStationState.EXEC,
 				processor.getReservationStations()[1].getState());
 		
-		assertEquals(
-				1,
-				processor.getInstructionQueue().size());
-		
+		// clock cycle 14
 		processor.runClockCycle();
 		
 		assertEquals(
@@ -189,6 +202,7 @@ public class ProcessorTests {
 				lrs.getState());
 		
 		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
 				ReservationStationState.WRITE,
 				processor.getReservationStations()[1].getState());
 		
@@ -212,7 +226,34 @@ public class ProcessorTests {
 				0,
 				processor.getRegisterFile().getRegisterStatus((byte) 6));
 		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
+				-1,
+				processor.getReservationStations()[6].getQk());
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
+				1,
+				processor.getReservationStations()[6].getQj());
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 15.",
+				-1,
+				processor.getReservationStations()[6].getQk());
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 15.",
+				-1,
+				processor.getReservationStations()[4].getQk());
+		
+		//clock cycle 15
 		processor.runClockCycle();
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 15.",
+				-1,
+				processor.getReservationStations()[6].getQj());
+		
 		
 		assertEquals(
 				ReservationStationState.COMMIT,
@@ -226,6 +267,7 @@ public class ProcessorTests {
 				-1,
 				processor.getRegisterFile().getRegisterStatus((byte) 6));
 		
+		//clock cycle 16
 		processor.runClockCycle();
 		
 		assertEquals(
@@ -240,6 +282,105 @@ public class ProcessorTests {
 				2,
 				processor.getRegisterFile().getRegisterStatus((byte) 3));
 		
+		
+		//clock cycle 17
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The second LOAD should finish the EXEC by cycle 14.",
+				-1,
+				processor.getReservationStations()[6].getQj());
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[6].getState());
+		
+		//clock cycle 18
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[6].getState());
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				0,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		//clock cycle 19
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				6,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		//clock cycle 20
+		processor.runClockCycle();
+		
+		assertEquals(
+				"The MULT should finish the EXEC by cycle 14.",
+				-1,
+				processor.getRegisterFile().getRegisterStatus((byte) 3));
+		
+		assertEquals(
+				-1,
+				processor.getReservationStations()[4].getQj());
+		
+		assertEquals(
+				-1,
+				processor.getReservationStations()[4].getQk());
+		
+		assertEquals(
+				"The SUB should finish the EXEC by cycle 21.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				0,
+				processor.getROB().getEntry(3).getValue());
+				
+		//clock cycle 21
+		processor.runClockCycle();
+		
+		assertEquals(
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				4,
+				processor.getROB().getEntry(3).getValue());
+		
+		//clock cycle 22
+		processor.runClockCycle();
+				
+		
+		
+		assertEquals(
+				3,
+				processor.getRegisterFile().getRegisterValue((byte) 2));
+		
+		assertEquals(
+				6,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		for(int i = 0; i < 6; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				28,
+				processor.getRegisterFile().getRegisterValue((byte) 4));
+
+		assertEquals(
+				24,			
+				processor.getRegisterFile().getRegisterValue((byte) 6));
+
+		assertEquals(
+				4,
+				processor.getRegisterFile().getRegisterValue((byte) 7));
+
 		TestsInitializer.clean();
 	}
 }

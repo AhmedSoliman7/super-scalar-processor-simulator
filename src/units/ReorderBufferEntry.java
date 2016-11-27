@@ -40,6 +40,10 @@ public class ReorderBufferEntry {
 	}
 	
 	public void setInstructionType(InstructionType type) {
+		if(tempROBEntry != null) {
+			tempROBEntry.setInstructionType(type);
+			return;
+		}
 		instructionType = type;
 	}
 	

@@ -3,6 +3,7 @@ package test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class TestsInitializer {
 	
@@ -37,6 +38,17 @@ public class TestsInitializer {
 		out.println("SUB r7, r3, r6");
 		out.println("MULT r6, r3, r7");
 		out.println("ADD r4, r7, r6");
+
+		out.flush();
+		out.close();
+	}
+	
+	static void initGivenAssembly(ArrayList<String> instructions) throws FileNotFoundException {
+		PrintWriter out = new PrintWriter(ASM_FILE_NAME);
+
+		for(String inst: instructions) {
+			out.println(inst);
+		}
 
 		out.flush();
 		out.close();
@@ -80,7 +92,7 @@ public class TestsInitializer {
 		out.println("2 1");
 		out.println("2 1");
 		out.println("2 2");
-		out.println("2 5");
+		out.println("2 2");
 		out.println("1 2");
 		out.println(ASM_FILE_NAME);
 		out.println("100");
