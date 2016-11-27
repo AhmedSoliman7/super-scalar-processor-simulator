@@ -193,9 +193,7 @@ public class InstructionsTests {
 		
 		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
 		Processor processor = ProcessorBuilder.getProcessor();
-		
-		processor.getMemoryUnit().getMainMemory().getData()[0] = 100;
-		
+				
 		for(int i = 0; i < 12; i++)
 			processor.runClockCycle();
 		
@@ -361,6 +359,72 @@ public class InstructionsTests {
 				"The result from the last ADDI in r3 should be 5.",
 				5,
 				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		TestsInitializer.clean();
+	}
+	
+	@Test
+	public void testBEQ2() throws FileNotFoundException {
+		ArrayList<String> program = new ArrayList<String>();
+		program.add("ADDI r2, r2, 1");
+		program.add("ADDI r1, r1, 2");
+		program.add("BEQ r1, r2, 1");
+		program.add("ADD r3, r2, r1");
+		program.add("ADDI r3, r3, 5");
+		program.add("SW r3, r0, 15");
+		program.add("LW r5, r0, 15");
+		
+		TestsInitializer.initGivenAssembly(program);
+		TestsInitializer.initUserInput2();
+				
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		Processor processor = ProcessorBuilder.getProcessor();
+		
+		for(int i = 0; i < 36; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				8,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				8,
+				processor.getRegisterFile().getRegisterValue((byte) 5));
+		
+		TestsInitializer.clean();
+	}
+	
+	@Test
+	public void testBEQ3() throws FileNotFoundException {
+		ArrayList<String> program = new ArrayList<String>();
+		program.add("ADDI r2, r2, 1");
+		program.add("ADDI r1, r1, 2");
+		program.add("BEQ r1, r1, 1");
+		program.add("ADD r3, r2, r1");
+		program.add("ADDI r3, r3, 5");
+		program.add("SW r3, r0, 15");
+		program.add("LW r5, r0, 15");
+		
+		TestsInitializer.initGivenAssembly(program);
+		TestsInitializer.initUserInput2();
+				
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		Processor processor = ProcessorBuilder.getProcessor();
+		
+		for(int i = 0; i < 32; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				5,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				5,
+				processor.getRegisterFile().getRegisterValue((byte) 5));
 		
 		TestsInitializer.clean();
 	}
