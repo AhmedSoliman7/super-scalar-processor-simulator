@@ -8,6 +8,7 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 
 	@Override
 	public void issueInstruction(short instruction, short instructionAddress, short destROB) {
+		
 		super.issueInstruction(instruction, instructionAddress, destROB);
 		InstructionType opType = this.getOperationType();
 		if(opType != InstructionType.ADDI) {
@@ -35,7 +36,6 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 		if(this.getQj() == READY && this.getQk() == READY){
 			this.incrementTimer();
 		}
-
 		if(readyToWrite()) {
 			this.setState(ReservationStationState.WRITE);
 		}

@@ -68,7 +68,8 @@ public class Processor {
 	private void incrementPC(short instruction) {
 		PC++;
 		if(InstructionType.getInstructionType(instruction) == InstructionType.BEQ) {
-			short offset = InstructionDecoder.getImmediate(instruction);
+			byte offset = InstructionDecoder.getImmediate(instruction);
+
 			if(offset >= 0) {
 				PC += offset;
 			}	
@@ -114,6 +115,7 @@ public class Processor {
 
 	private void executeInstructions(){
 		for(ReservationStation rs: reservationStations){
+//			System.err.println(rs.isBusy() + " " + rs.getState());
 			if(rs.isBusy() && rs.getState() == ReservationStationState.EXEC) {
 				rs.executeInstruction();
 			}
@@ -146,6 +148,8 @@ public class Processor {
 		for(ReservationStation rs: reservationStations){
 			rs.clearBusy();
 		}
+		
+		this.instructionInFetch = null;
 		
 		this.flush();
 	}

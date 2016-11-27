@@ -222,7 +222,7 @@ public abstract class ReservationStation {
 		this.state = state;
 	}
 
-	int getTimerTillNextState() {
+	public int getTimerTillNextState() {
 		return timerTillNextState;
 	}
 	
