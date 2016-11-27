@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import main.ProcessorBuilder;
+import reservation_station.ReservationStationState;
 import units.Processor;
 
 public class InstructionsTests {
@@ -174,6 +175,192 @@ public class InstructionsTests {
 				"The cached SW result should be 30.",
 				100,
 				processor.getRegisterFile().getRegisterValue((byte) 2));
+		
+		TestsInitializer.clean();
+	}
+	
+	@Test
+	public void testBEQ() throws FileNotFoundException {
+		ArrayList<String> program = new ArrayList<String>();
+		program.add("ADDI r2, r2, 1");
+		program.add("ADDI r1, r1, 1");
+		program.add("BEQ r1, r2, -2");
+		program.add("ADDI r3, r3, 5");
+		
+		TestsInitializer.initGivenAssembly(program);
+		TestsInitializer.initUserInput2();
+		
+		
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		Processor processor = ProcessorBuilder.getProcessor();
+		
+		processor.getMemoryUnit().getMainMemory().getData()[0] = 100;
+		
+		for(int i = 0; i < 12; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				false,
+				processor.getReservationStations()[4].isBusy());
+		
+		processor.runClockCycle();
+		// clock cycle 13
+		
+		assertEquals(
+				"BEQ is beginning executing.",
+				ReservationStationState.EXEC,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				"Last ADDI hasn't begun yet.",
+				false,
+				processor.getReservationStations()[5].isBusy());
+		
+		processor.runClockCycle();
+		
+		assertEquals(
+				"Last ADDI will start EXEC.",
+				ReservationStationState.EXEC,
+				processor.getReservationStations()[5].getState());
+		
+		processor.runClockCycle();
+		// clock cycle 15
+		
+		assertEquals(
+				"BEQ is beginning writing.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[4].getState());
+		
+		processor.runClockCycle();
+		// clock cycle 16
+		
+		assertEquals(
+				"BEQ is beginning committing.",
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				"Last ADDI will start WRITE.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[5].getState());
+		
+		assertEquals(
+				"Current PC shouldn't be changed yet",
+				105,
+				processor.getPC());
+		
+		processor.runClockCycle();
+		// clock cycle 17
+		
+		assertEquals(
+				"Current PC should point to the Branch Address",
+				102,
+				processor.getPC());
+		
+		assertEquals(
+				"The instruction queue should be flushed after branching.",
+				0,
+				processor.getInstructionQueue().size());
+		
+		assertEquals(
+				"The reservation stations should be freed.",
+				false,
+				processor.getReservationStations()[4].isBusy()
+				|| processor.getReservationStations()[5].isBusy());
+		
+		assertEquals(
+				"The reservation stations should be freed.",
+				0,
+				processor.getROB().getCountEntries());
+		
+		processor.runClockCycle();
+		// clock cycle 18
+		assertEquals(
+				"The ADDI wasn't issued yet.",
+				false,
+				processor.getReservationStations()[4].isBusy());
+		
+		assertEquals(
+				"ADDI is fetched and added to instruction queue",
+				1,
+				processor.getInstructionQueue().size());
+		
+		
+		processor.runClockCycle();
+		// clock cycle 19
+		
+		assertEquals(
+				"ADDI is issued and about to EXEC",
+				ReservationStationState.EXEC,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				"next BEQ is fetched.",
+				1,
+				processor.getInstructionQueue().size());
+		
+		assertEquals(
+				"BEQ is not issud yet.",
+				false,
+				processor.getReservationStations()[5].isBusy());
+		
+		processor.runClockCycle();
+		// clock cycle 20
+		
+		assertEquals(
+				"BEQ is issued and about to EXEC",
+				ReservationStationState.EXEC,
+				processor.getReservationStations()[5].getState());
+			
+		processor.runClockCycle();
+		processor.runClockCycle();
+		
+
+		// clock cycle 22
+		
+		assertEquals(
+				"ADDI is about to commit.",
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[4].getState());
+		
+		processor.runClockCycle();
+		// clock cycle 23;
+		assertEquals(
+				"The result from ADDI in r1 should be 2.",
+				2,
+				processor.getRegisterFile().getRegisterValue((byte) 1));
+
+		assertEquals(
+				"ADDI is about to EXEC.",
+				ReservationStationState.EXEC,
+				processor.getReservationStations()[4].getState());
+		
+		processor.runClockCycle();
+		// clock cycle 24
+		assertEquals(
+				"BEQ is about to WRITE.",
+				ReservationStationState.WRITE,
+				processor.getReservationStations()[5].getState());
+		
+		processor.runClockCycle();
+		processor.runClockCycle();
+		// clock cycle 26;
+		assertEquals(
+				"ADDI is about to COMMIT.",
+				ReservationStationState.COMMIT,
+				processor.getReservationStations()[4].getState());
+		
+		assertEquals(
+				"The PC with branch not taken should be 105",
+				107,
+				processor.getPC());
+		
+		processor.runClockCycle();
+		// clock cycle 27
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				5,
+				processor.getRegisterFile().getRegisterValue((byte) 3));
 		
 		TestsInitializer.clean();
 	}

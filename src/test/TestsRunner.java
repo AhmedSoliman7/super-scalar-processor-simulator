@@ -10,7 +10,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	ParserTests.class,
 	ProcessorBuilderTests.class,
 	ProcessorTests.class,
-	InstructionsTests.class})
+	InstructionsTests.class,
+	ForwardingTests.class})
 public class TestsRunner {
 
 }

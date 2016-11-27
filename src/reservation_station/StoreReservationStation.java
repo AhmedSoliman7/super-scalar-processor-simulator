@@ -43,10 +43,6 @@ public class StoreReservationStation extends ReservationStation {
 		}
 	}
 	
-	public static int getCycles() {
-		return cycles;
-	}
-
 	public static void setCycles(int cycles) {
 		StoreReservationStation.cycles = cycles;
 	}

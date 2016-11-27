@@ -44,7 +44,6 @@ public class AddReservationStation extends IntOpernationReservationStation {
 	}
 	
 	private short predictionResult(short diff, short address) {
-		
 		if(diff == 0 && address >= 0 || diff != 0 && address < 0)
 			return 1;												//correct branch prediction					
 		if(address >= 0) {

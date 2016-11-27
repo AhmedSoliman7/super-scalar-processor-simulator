@@ -45,6 +45,7 @@ public class ReorderBuffer {
 				if(robHead.getValue() == 0){
 					ProcessorBuilder.getProcessor().clear();
 					ProcessorBuilder.getProcessor().updatePC(robHead.getDestination());
+					return;
 				}
 			}
 			else if(type == InstructionType.STORE) {
@@ -74,8 +75,10 @@ public class ReorderBuffer {
 	}
 	
 	public void clear() {
+		this.countEntries = 0;
 		head = 0;
 		tail = 0;
+		writingCounter = -1;
 	}
 	
 	public boolean findMatchingStoreAddress(short address, short end){
@@ -96,5 +99,9 @@ public class ReorderBuffer {
 			
 			entries[idx].flush();
 		}
+	}
+	
+	public int getCountEntries() {
+		return countEntries;
 	}
 }

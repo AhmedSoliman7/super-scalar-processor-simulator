@@ -13,10 +13,6 @@ public class LoadReservationStation extends ReservationStation {
 			this.setTempReservationStation(new LoadReservationStation(false));
 	}
 
-	public static int getCycles() {
-		return cycles;
-	}
-
 	public static void setCycles(int cycles) {
 		LoadReservationStation.cycles = cycles;
 	}

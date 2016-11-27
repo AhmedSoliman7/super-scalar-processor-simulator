@@ -47,6 +47,7 @@ public abstract class ReservationStation {
 			ReorderBufferEntry ROBEntry = ProcessorBuilder.getProcessor().getROB().getEntry(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus(rs));
 			if(ROBEntry.isReady() || ProcessorBuilder.getProcessor().getReadyRegister() == rs){
 				if(!ROBEntry.isReady()) {
+					// the write and issue are in the same clock cycle
 					this.setVj(ProcessorBuilder.getProcessor().getReadyValue());
 				}
 				else {
@@ -221,7 +222,7 @@ public abstract class ReservationStation {
 		this.state = state;
 	}
 
-	int getTimerTillNextState() {
+	public int getTimerTillNextState() {
 		return timerTillNextState;
 	}
 	

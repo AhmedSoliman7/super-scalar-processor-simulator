@@ -22,7 +22,10 @@ public class InstructionDecoder {
 	
 	
 	public static byte getImmediate(short instruction){
-		return (byte) (instruction & 127);
+		byte imm = (byte) (instruction & 127);
+		imm |= (imm << 1) & -127;
+		
+		return imm;
 	}
 	
 	public static byte getOpcode(short instruction){
