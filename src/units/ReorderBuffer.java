@@ -68,7 +68,6 @@ public class ReorderBuffer {
 				
 				ProcessorBuilder.getProcessor().updatePC(targetAddress);
 				ProcessorBuilder.getProcessor().getRegisterFile().setRegisterValue((byte) robHead.getDestination(), regValue);
-				System.err.println(targetAddress + " " + regValue + " " + robHead.getDestination());
 				return;
 			}
 			else {

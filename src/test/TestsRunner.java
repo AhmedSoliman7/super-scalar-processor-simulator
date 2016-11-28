@@ -17,7 +17,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	ProcessorBuilderTests.class,
 	ProcessorTests.class,
 	InstructionsTests.class,
-	ForwardingTests.class})
+	ForwardingTests.class,
+	TrickyProgramsTest.class})
 public class TestsRunner {
 	@BeforeClass
     public static void init() throws FileNotFoundException {

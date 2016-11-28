@@ -17,16 +17,18 @@ public abstract class ReservationStation {
 	private int timerTillNextState;
 	private int startTime;
 
-	public static ReservationStation create(ReservationStationType reservationStationType) { 
+	public static ReservationStation create(ReservationStationType reservationStationType) {
+		ReservationStation reservationStation = null;
+		
 		switch(reservationStationType) {
-		case LOAD : return new LoadReservationStation(true);
-		case STORE: return new StoreReservationStation(true);
-		case ADD  : return new AddReservationStation(true);
-		case MULT : return new MultReservationStation(true);
-		case NAND : return new NandReservationStation(true);
-
-		default : throw new RuntimeException("Not a valid reservation station type!");
+		case LOAD : reservationStation = new LoadReservationStation(true); break;
+		case STORE: reservationStation = new StoreReservationStation(true); break;
+		case ADD  : reservationStation = new AddReservationStation(true); break;
+		case MULT : reservationStation = new MultReservationStation(true); break;
+		case NAND : reservationStation = new NandReservationStation(true); break;
 		}
+		
+		return reservationStation;
 	}
 
 	public void issueInstruction(short instruction, short instructionAddress, short destROB){

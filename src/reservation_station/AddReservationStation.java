@@ -32,9 +32,8 @@ public class AddReservationStation extends IntOpernationReservationStation {
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination(this.getVj());
 			return 0;
 		case JALR:
-			return (short) (this.getInstructionAddress() + 1);
 		default:
-			throw new RuntimeException(String.format("Error! Unknown operation type %s in ADD reservation station.", "" + type));
+			return (short) (this.getInstructionAddress() + 1);
 		}
 	}
 
