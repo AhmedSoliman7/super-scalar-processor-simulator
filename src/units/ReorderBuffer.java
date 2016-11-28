@@ -55,14 +55,23 @@ public class ReorderBuffer {
 				}
 				
 				if(writingCounter == -1) {
-					writingCounter = ProcessorBuilder.getProcessor().getMemoryUnit().write(robHead.getDestination(), robHead.getValue());
+					writingCounter = ProcessorBuilder.getProcessor().getMemoryUnit().write(robHead.getDestination(), (short) robHead.getValue());
 					return;
 				}
 				
 				writingCounter = -1;
 			}
+			else if(type == InstructionType.JALR) {
+				ProcessorBuilder.getProcessor().clear();
+				short targetAddress = (short) (robHead.getValue() & ((1 << 16) - 1));
+				short regValue = (short) (robHead.getValue() >>> 16);
+				
+				ProcessorBuilder.getProcessor().updatePC(targetAddress);
+				ProcessorBuilder.getProcessor().getRegisterFile().setRegisterValue((byte) robHead.getDestination(), regValue);
+				return;
+			}
 			else {
-				ProcessorBuilder.getProcessor().getRegisterFile().setRegisterValue((byte)robHead.getDestination(), robHead.getValue());
+				ProcessorBuilder.getProcessor().getRegisterFile().setRegisterValue((byte)robHead.getDestination(), (short) robHead.getValue());
 				if(ProcessorBuilder.getProcessor().getRegisterFile().getRegisterStatus((byte)robHead.getDestination()) == head){
 					ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus((byte)robHead.getDestination(), VALID);
 				}

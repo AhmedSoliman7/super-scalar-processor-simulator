@@ -6,6 +6,9 @@ public class InstructionDecoder {
 		short opcode = getOpcode(instruction);
 		if(opcode == 0)
 			return (byte) (instruction >> 3 & 7);
+		if(opcode == 6)
+			return (byte) (instruction >> 7 & 7);
+		
 		return (byte) (instruction >> 10 & 7);
 	}
 	
@@ -13,6 +16,8 @@ public class InstructionDecoder {
 		short opcode = getOpcode(instruction);
 		if(opcode == 0)
 			return (byte) (instruction & 7);
+		if(opcode == 6)
+			return (byte) (instruction >> 10 & 7);
 		return (byte) (instruction >> 7 & 7);
 	}
 	

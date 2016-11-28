@@ -17,7 +17,7 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 		else if(opType == InstructionType.JMP) {
 			this.setVk((short) (InstructionDecoder.getImmediate(instruction) + 1 + this.getInstructionAddress()));
 		}
-		else if(opType == InstructionType.RET){
+		else if(opType == InstructionType.RET || opType == InstructionType.JALR){
 			this.setQk(READY);
 		}
 		else {
@@ -31,7 +31,7 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(effectiveAddress);
 		}
 		else if(opType != InstructionType.JMP && opType != InstructionType.RET)  {
-			byte destRegister = opType == InstructionType.ADDI ? InstructionDecoder.getRT(instruction) : InstructionDecoder.getRD(instruction);
+			byte destRegister = opType == InstructionType.ADDI || opType == InstructionType.JALR ? InstructionDecoder.getRT(instruction) : InstructionDecoder.getRD(instruction);
 			ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus(destRegister, destROB);
 			ProcessorBuilder.getProcessor().getROB().getEntry(destROB).setDestination(destRegister);						
 		}
@@ -53,7 +53,12 @@ public abstract class IntOpernationReservationStation extends ReservationStation
 	public void writeInstruction() {
 		short result = calculate();
 		passToOtherReservationStations(result);
-		ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(result);
+		
+		if(this.getOperationType() == InstructionType.JALR) {
+			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue((result << 16) | this.getVj());
+		}
+		else 
+			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setValue(result);
 		
 		passToOtherReservationStations(result);
 		
