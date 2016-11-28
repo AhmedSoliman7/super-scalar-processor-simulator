@@ -51,7 +51,7 @@ public abstract class ReservationStation {
 					this.setVj(ProcessorBuilder.getProcessor().getReadyValue());
 				}
 				else {
-					this.setVj(ROBEntry.getValue());
+					this.setVj((short) ROBEntry.getValue());
 				}
 			}
 			else{
@@ -72,7 +72,7 @@ public abstract class ReservationStation {
 					this.setVk(ProcessorBuilder.getProcessor().getReadyValue());
 				}
 				else {
-					this.setVk(ROBEntry.getValue());
+					this.setVk((short) ROBEntry.getValue());
 				}
 			}
 			else{

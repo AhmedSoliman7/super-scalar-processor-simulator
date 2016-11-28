@@ -1,5 +1,7 @@
 package reservation_station;
 
+import javax.swing.plaf.synth.SynthSpinnerUI;
+
 import main.ProcessorBuilder;
 import units.InstructionType;
 
@@ -29,8 +31,10 @@ public class AddReservationStation extends IntOpernationReservationStation {
 		case RET:
 			ProcessorBuilder.getProcessor().getROB().getEntry(this.getDestROB()).setDestination(this.getVj());
 			return 0;
+		case JALR:
+			return (short) (this.getInstructionAddress() + 1);
 		default:
-			throw new RuntimeException("Error! Unknown operation type in ADD reservation station.");
+			throw new RuntimeException(String.format("Error! Unknown operation type %s in ADD reservation station.", "" + type));
 		}
 	}
 

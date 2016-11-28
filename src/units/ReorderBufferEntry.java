@@ -5,7 +5,8 @@ import main.ProcessorBuilder;
 public class ReorderBufferEntry {
 
 	private InstructionType instructionType;
-	private short value, destintation;
+	private short destintation;
+	private int value;
 	private boolean ready;
 	private ReorderBufferEntry tempROBEntry;
 	
@@ -19,11 +20,11 @@ public class ReorderBufferEntry {
 		return ready;
 	}
 	
-	public short getValue(){
+	public int getValue(){
 		return value;
 	}
 	
-	public void setValue(short value){
+	public void setValue(int value){
 		if(tempROBEntry != null) {
 			tempROBEntry.setValue(value);
 			return;
