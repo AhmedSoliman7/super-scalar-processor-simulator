@@ -30,8 +30,8 @@ public class Processor {
 	private int instructionCompleted;
 	private int branchesEncountered;
 	private int branchesMisspredictions;
-	
-
+	private int loadAndStoreInstructions;
+	private int timeSpentToAccessMemory;
 	private int timer;
 	
 	public Processor(){
@@ -80,6 +80,7 @@ public class Processor {
 		}
 		
 		ReturnPair<Short> instructionPair = memoryUnit.fetchInstruction(PC);
+		incrementTimeSpentToAccessMemory(instructionPair.clockCycles);
 		instructionInFetch = new InstructionInFetch(instructionPair.value, PC, (short) (instructionPair.clockCycles - 1));
 		incrementPC(instructionPair.value);		
 	}
@@ -135,7 +136,6 @@ public class Processor {
 
 	private void executeInstructions(){
 		for(ReservationStation rs: reservationStations){
-//			System.err.println(rs.isBusy() + " " + rs.getState());
 			if(rs.isBusy() && rs.getState() == ReservationStationState.EXEC) {
 				rs.executeInstruction();
 			}
@@ -287,6 +287,22 @@ public class Processor {
 		this.branchesMisspredictions++;
 	}
 	
+	public int getLoadAndStoreInstructions() {
+		return loadAndStoreInstructions;
+	}
+	
+	public void incrementLoadAndStoreInstructions() {
+		this.loadAndStoreInstructions++;
+	}
+	
+	public int getTimeSpentToAccessMemory() {
+		return timeSpentToAccessMemory;
+	}
+	
+	public void incrementTimeSpentToAccessMemory(int time) {
+		this.timeSpentToAccessMemory+=time;
+	}
+	
 	public double getMispredictedBranchesPercentage() {
 		return (this.getBranchesMisspredictions() * 100.0 / this.getBranchesEncountered() * 1.0);
 	}
@@ -303,6 +319,10 @@ public class Processor {
 		int hits = instructionCacheLevel.getReadHits() + instructionCacheLevel.getWriteHits();
 		int misses = instructionCacheLevel.getReadMisses() + instructionCacheLevel.getWriteMisses();
 		return (hits * 100.0 / (hits + misses));
+	}
+	
+	public double getIPC(){
+		return this.getInstructionCompleted() * 1.0 / this.getTimer();
 	}
 
 }

@@ -37,7 +37,13 @@ public class Simulator {
 					processor.getInstructionCacheHitRatio(i - 1));
 		}
 		
-		System.out.printf("Number of branch misspredictions: %d with percentage of %.2f%%\n", processor.getBranchesMisspredictions(), processor.getMispredictedBranchesPercentage());
+		System.out.printf("Number of branch misspredictions: %d with percentage of %.2f%%\n",
+				processor.getBranchesMisspredictions(), processor.getMispredictedBranchesPercentage());
+		
+		System.out.printf("Time spent to access memory: %d\n", processor.getTimeSpentToAccessMemory());
+		
+		System.out.printf("AMAT: %.2f\n", processor.getMemoryUnit().getAMAT());
+		System.out.printf("IPC: %.2f\n", processor.getIPC());
 	}
 	
 	public Processor getProcessor() {

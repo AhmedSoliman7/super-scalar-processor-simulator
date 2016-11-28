@@ -61,7 +61,7 @@ public class SimulatorTests {
 		int numCaches = simulator.getProcessor().getMemoryUnit().getDataCaches().length;
 		
 		assertEquals(
-				6 + 2 * numCaches,
+				9 + 2 * numCaches,
 				simulatorOutput.size());
 		
 		int outputIndex = 0;
@@ -112,6 +112,22 @@ public class SimulatorTests {
 						simulator.getProcessor().getBranchesMisspredictions(),
 						simulator.getProcessor().getMispredictedBranchesPercentage()),
 				simulatorOutput.get(outputIndex++));
+		
+		assertEquals(
+				String.format("Time spent to access memory: %d",
+						simulator.getProcessor().getTimeSpentToAccessMemory()),
+				simulatorOutput.get(outputIndex++));
+		
+		assertEquals(
+				String.format("AMAT: %.2f",
+						simulator.getProcessor().getMemoryUnit().getAMAT()),
+				simulatorOutput.get(outputIndex++));
+		
+		assertEquals(
+				String.format("IPC: %.2f",
+						simulator.getProcessor().getIPC()),
+				simulatorOutput.get(outputIndex++));
+		
 		
 		simulatorFile.delete();
 		TestsInitializer.clean();

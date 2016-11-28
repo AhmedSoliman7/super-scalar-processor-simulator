@@ -1,5 +1,8 @@
 package memory;
 
+import main.ProcessorBuilder;
+import units.Processor;
+
 public class MemoryHandler {
 	Cache[] instructionCaches;
 	Cache[] dataCaches;
@@ -29,6 +32,36 @@ public class MemoryHandler {
 				associativity,
 				writingPolicy,
 				accessTime);
+	}
+	
+	public double getAMAT(){
+		return getInstructionAMAT() + (ProcessorBuilder.getProcessor().getLoadAndStoreInstructions() * 1.0
+				/ ProcessorBuilder.getProcessor().getInstructionCompleted()) * getDataAMAT();
+	}
+	
+	
+	public double getInstructionAMAT(){
+		double AMAT = 0;
+		double missRatio = 1;
+		for(int i = 0; i < instructionCaches.length; i++) {
+			AMAT += missRatio * instructionCaches[i].accessTime;
+			missRatio *= (1 - ProcessorBuilder.getProcessor().getInstructionCacheHitRatio(i) / 100.0);
+		}
+		AMAT += (missRatio * mainMemory.accessTime);
+//		System.err.println(AMAT);
+		return AMAT;
+	}
+	
+	public double getDataAMAT(){
+		double AMAT = 0;
+		double missRatio = 1;
+		for(int i = 0; i < dataCaches.length; i++) {
+			AMAT += missRatio * dataCaches[i].accessTime;
+			missRatio *= (1 - ProcessorBuilder.getProcessor().getDataCacheHitRatio(i) / 100.0);
+		}
+		AMAT += (missRatio * mainMemory.accessTime);
+//		System.err.println(AMAT);
+		return AMAT;
 	}
 	
 	public void initializeMainMemoryEntry(short address, short value) {
