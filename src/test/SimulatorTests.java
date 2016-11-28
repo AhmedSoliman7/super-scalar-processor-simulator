@@ -85,11 +85,14 @@ public class SimulatorTests {
 		
 		for(int i = 0; i < numCaches; i++) {
 			assertEquals(
-					String.format("Level %d: %d read hits, %d read misses, %d write hits, %d write misses.",
+					String.format(
+							"Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.",
 							i + 1,
 							dataCache[i].getReadHits(),
+							simulator.getProcessor().getDataCacheReadHitRatio(i),
 							dataCache[i].getReadMisses(),
 							dataCache[i].getWriteHits(),
+							simulator.getProcessor().getDataCacheWriteHitRatio(i),
 							dataCache[i].getWriteMisses()),
 					simulatorOutput.get(outputIndex++));
 		}
@@ -98,17 +101,21 @@ public class SimulatorTests {
 		
 		for(int i = 0; i < numCaches; i++) {
 			assertEquals(
-					String.format("Level %d: %d read hits, %d read misses, %d write hits, %d write misses.",
+					String.format("Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.",
 							i + 1,
 							InstructionCache[i].getReadHits(),
+							simulator.getProcessor().getInstructionCacheReadHitRatio(i), 
 							InstructionCache[i].getReadMisses(),
 							InstructionCache[i].getWriteHits(),
+							simulator.getProcessor().getInstructionCacheWriteHitRatio(i),
 							InstructionCache[i].getWriteMisses()),
 					simulatorOutput.get(outputIndex++));
 		}
 		
 		assertEquals(
-				String.format("Number of branch misspredictions: %d", simulator.getProcessor().getBranchesMisspredictions()),
+				String.format("Number of branch misspredictions: %d with percentage of %.2f%%",
+						simulator.getProcessor().getBranchesMisspredictions(),
+						simulator.getProcessor().getMispredictedBranchesPercentage()),
 				simulatorOutput.get(outputIndex++));
 		
 		simulatorFile.delete();

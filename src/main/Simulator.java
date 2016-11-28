@@ -22,19 +22,23 @@ public class Simulator {
 		System.out.printf("Data cache:\n");
 		Cache dataCache [] = processor.getMemoryUnit().getDataCaches();
 		for(int i = 1; i <= dataCache.length; i++) {
-			System.out.printf("Level %d: %d read hits, %d read misses, %d write hits, %d write misses.\n", i,
-					dataCache[i - 1].getReadHits(), dataCache[i - 1].getReadMisses(), dataCache[i - 1].getWriteHits(),
-					dataCache[i - 1].getWriteMisses());
+			System.out.printf(
+					"Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.\n",
+					i, dataCache[i - 1].getReadHits(), processor.getDataCacheReadHitRatio(i - 1),
+					dataCache[i - 1].getReadMisses(), dataCache[i - 1].getWriteHits(),
+					processor.getDataCacheWriteHitRatio(i - 1), dataCache[i - 1].getWriteMisses());
 		}
 		System.out.printf("Instruction cache:\n");
-		Cache instructionCache [] = processor.getMemoryUnit().getInstructionCaches();
-		for(int i = 1; i <= instructionCache.length; i++) {
-			System.out.printf("Level %d: %d read hits, %d read misses, %d write hits, %d write misses.\n", i,
-					instructionCache[i - 1].getReadHits(), instructionCache[i - 1].getReadMisses(), instructionCache[i - 1].getWriteHits(),
-					instructionCache[i - 1].getWriteMisses());
+		Cache instructionCache[] = processor.getMemoryUnit().getInstructionCaches();
+		for (int i = 1; i <= instructionCache.length; i++) {
+			System.out.printf(
+					"Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.\n",
+					i, instructionCache[i - 1].getReadHits(), processor.getInstructionCacheReadHitRatio(i - 1),
+					instructionCache[i - 1].getReadMisses(), instructionCache[i - 1].getWriteHits(),
+					processor.getInstructionCacheWriteHitRatio(i - 1), instructionCache[i - 1].getWriteMisses());
 		}
 		
-		System.out.printf("Number of branch misspredictions: %d\n", processor.getBranchesMisspredictions());
+		System.out.printf("Number of branch misspredictions: %d with percentage of %.2f%%\n", processor.getBranchesMisspredictions(), processor.getMispredictedBranchesPercentage());
 	}
 	
 	public Processor getProcessor() {
