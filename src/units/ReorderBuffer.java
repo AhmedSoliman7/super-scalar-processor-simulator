@@ -41,8 +41,6 @@ public class ReorderBuffer {
 
 	public void commit() {
 		if(!isEmpty() && entries[head].isReady()){
-			ProcessorBuilder.getProcessor().incrementInstructionCompleted();
-			
 			ReorderBufferEntry robHead = entries[head];
 			
 			InstructionType type = robHead.getInstructionType();
@@ -60,6 +58,7 @@ public class ReorderBuffer {
 						ProcessorBuilder.getProcessor().incrementBranchesMisspredictions();
 					ProcessorBuilder.getProcessor().clear();
 					ProcessorBuilder.getProcessor().updatePC(robHead.getDestination());
+					ProcessorBuilder.getProcessor().incrementInstructionCompleted();
 					return;
 				}
 			}
@@ -78,6 +77,7 @@ public class ReorderBuffer {
 				writingCounter = -1;
 			}
 			else if(type == InstructionType.JALR) {
+				ProcessorBuilder.getProcessor().incrementInstructionCompleted();
 				ProcessorBuilder.getProcessor().clear();
 				short targetAddress = (short) (robHead.getValue() & ((1 << 16) - 1));
 				short regValue = (short) (robHead.getValue() >>> 16);
@@ -92,7 +92,7 @@ public class ReorderBuffer {
 					ProcessorBuilder.getProcessor().getRegisterFile().setRegisterStatus((byte)robHead.getDestination(), VALID);
 				}
 			}
-		
+			ProcessorBuilder.getProcessor().incrementInstructionCompleted();
 			head++;
 			head %= maxSize;
 			countEntries--;

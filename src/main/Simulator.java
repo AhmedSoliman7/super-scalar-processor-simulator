@@ -23,7 +23,7 @@ public class Simulator {
 		Cache dataCache [] = processor.getMemoryUnit().getDataCaches();
 		for(int i = 1; i <= dataCache.length; i++) {
 			System.out.printf(
-					"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.\n", i,
+					"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ratio: %.2f%%.\n", i,
 					dataCache[i - 1].getReadHits(), dataCache[i - 1].getReadMisses(), dataCache[i - 1].getWriteHits(),
 					dataCache[i - 1].getWriteMisses(), processor.getDataCacheHitRatio(i - 1));
 		}
@@ -31,7 +31,7 @@ public class Simulator {
 		Cache instructionCache[] = processor.getMemoryUnit().getInstructionCaches();
 		for (int i = 1; i <= instructionCache.length; i++) {
 			System.out.printf(
-					"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.\n", i,
+					"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ratio: %.2f%%.\n", i,
 					instructionCache[i - 1].getReadHits(), instructionCache[i - 1].getReadMisses(),
 					instructionCache[i - 1].getWriteHits(), instructionCache[i - 1].getWriteMisses(),
 					processor.getInstructionCacheHitRatio(i - 1));

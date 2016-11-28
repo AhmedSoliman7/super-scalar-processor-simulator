@@ -86,7 +86,7 @@ public class SimulatorTests {
 		for(int i = 0; i < numCaches; i++) {
 			assertEquals(
 					String.format(
-							"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.",
+							"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ratio: %.2f%%.",
 							i + 1, dataCache[i].getReadHits(), dataCache[i].getReadMisses(),
 							dataCache[i].getWriteHits(), dataCache[i].getWriteMisses(),
 							simulator.getProcessor().getDataCacheHitRatio(i)),
@@ -97,7 +97,7 @@ public class SimulatorTests {
 		
 		for(int i = 0; i < numCaches; i++) {
 			assertEquals(
-					String.format("Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.",
+					String.format("Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ratio: %.2f%%.",
 							i + 1,
 							InstructionCache[i].getReadHits(),
 							InstructionCache[i].getReadMisses(),
