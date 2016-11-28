@@ -39,10 +39,18 @@ public class ReorderBuffer {
 
 	public void commit() {
 		if(!isEmpty() && entries[head].isReady()){
-			ReorderBufferEntry robHead = entries[head]; 
+			ProcessorBuilder.getProcessor().incrementInstructionCompleted();
+			
+			ReorderBufferEntry robHead = entries[head];
+			
 			InstructionType type = robHead.getInstructionType(); 
+			if(type == InstructionType.BEQ){
+				ProcessorBuilder.getProcessor().incrementBranchesEncountered();
+			}
 			if(type == InstructionType.BEQ || type == InstructionType.JMP || type == InstructionType.RET) {
 				if(robHead.getValue() == 0){
+					if(type == InstructionType.BEQ)
+						ProcessorBuilder.getProcessor().incrementBranchesMisspredictions();
 					ProcessorBuilder.getProcessor().clear();
 					ProcessorBuilder.getProcessor().updatePC(robHead.getDestination());
 					return;

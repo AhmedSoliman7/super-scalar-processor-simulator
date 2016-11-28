@@ -59,6 +59,10 @@ public class MemoryHandler {
 	public Cache[] getDataCaches() {
 		return dataCaches;
 	}
+	
+	public Cache[] getInstructionCaches() {
+		return instructionCaches;
+	}
 
 	public MainMemory getMainMemory() {
 		return mainMemory;

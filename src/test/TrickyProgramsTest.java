@@ -57,7 +57,7 @@ public class TrickyProgramsTest {
 		Processor processor = ProcessorBuilder.getProcessor();
 		
 		
-		for(int i = 0; i < 127; i++)
+		for(int i = 0; i < 111; i++)
 			processor.runClockCycle();
 		
 		assertEquals(

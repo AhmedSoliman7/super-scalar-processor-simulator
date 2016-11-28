@@ -23,7 +23,6 @@ public class ParserTests {
 		initAssembly();
 
 		parser.readProgram(FILE_NAME, startAddress, handler);
-
 		assertEquals(
 				(short) 87,
 				handler.getMainMemory().getData()[startAddress++]);
