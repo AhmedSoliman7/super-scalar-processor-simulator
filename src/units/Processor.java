@@ -311,6 +311,8 @@ public class Processor {
 		Cache dataCacheLevel = this.memoryUnit.getDataCaches()[level];
 		int hits = dataCacheLevel.getReadHits() + dataCacheLevel.getWriteHits();
 		int misses = dataCacheLevel.getReadMisses() + dataCacheLevel.getWriteMisses();
+		if(hits + misses == 0)
+			return 0;
 		return (hits * 100.0 / (hits + misses));
 	}
 	
@@ -318,6 +320,8 @@ public class Processor {
 		Cache instructionCacheLevel = this.memoryUnit.getInstructionCaches()[level];
 		int hits = instructionCacheLevel.getReadHits() + instructionCacheLevel.getWriteHits();
 		int misses = instructionCacheLevel.getReadMisses() + instructionCacheLevel.getWriteMisses();
+		if(hits + misses == 0)
+			return 0;
 		return (hits * 100.0 / (hits + misses));
 	}
 	

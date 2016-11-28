@@ -35,8 +35,8 @@ public class MemoryHandler {
 	}
 	
 	public double getAMAT(){
-		return getInstructionAMAT() + (ProcessorBuilder.getProcessor().getLoadAndStoreInstructions() * 1.0
-				/ ProcessorBuilder.getProcessor().getInstructionCompleted()) * getDataAMAT();
+		return getInstructionAMAT() + (getDataAMAT() == 0 ? 0 : (ProcessorBuilder.getProcessor().getLoadAndStoreInstructions() * 1.0
+				/ ProcessorBuilder.getProcessor().getInstructionCompleted()) * getDataAMAT());
 	}
 	
 	
@@ -48,7 +48,6 @@ public class MemoryHandler {
 			missRatio *= (1 - ProcessorBuilder.getProcessor().getInstructionCacheHitRatio(i) / 100.0);
 		}
 		AMAT += (missRatio * mainMemory.accessTime);
-//		System.err.println(AMAT);
 		return AMAT;
 	}
 	
@@ -60,7 +59,6 @@ public class MemoryHandler {
 			missRatio *= (1 - ProcessorBuilder.getProcessor().getDataCacheHitRatio(i) / 100.0);
 		}
 		AMAT += (missRatio * mainMemory.accessTime);
-//		System.err.println(AMAT);
 		return AMAT;
 	}
 	
