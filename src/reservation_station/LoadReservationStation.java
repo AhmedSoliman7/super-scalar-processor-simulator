@@ -36,6 +36,8 @@ public class LoadReservationStation extends ReservationStation {
 			ReturnPair<Short> readPair = ProcessorBuilder.getProcessor()
 					.getMemoryUnit()
 					.read(newAddress);
+			
+			ProcessorBuilder.getProcessor().incrementTimeSpentToAccessMemory(readPair.clockCycles);
 
 			this.fetchedPair = readPair;
 		}

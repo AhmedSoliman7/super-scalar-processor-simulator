@@ -23,22 +23,27 @@ public class Simulator {
 		Cache dataCache [] = processor.getMemoryUnit().getDataCaches();
 		for(int i = 1; i <= dataCache.length; i++) {
 			System.out.printf(
-					"Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.\n",
-					i, dataCache[i - 1].getReadHits(), processor.getDataCacheReadHitRatio(i - 1),
-					dataCache[i - 1].getReadMisses(), dataCache[i - 1].getWriteHits(),
-					processor.getDataCacheWriteHitRatio(i - 1), dataCache[i - 1].getWriteMisses());
+					"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.\n", i,
+					dataCache[i - 1].getReadHits(), dataCache[i - 1].getReadMisses(), dataCache[i - 1].getWriteHits(),
+					dataCache[i - 1].getWriteMisses(), processor.getDataCacheHitRatio(i - 1));
 		}
 		System.out.printf("Instruction cache:\n");
 		Cache instructionCache[] = processor.getMemoryUnit().getInstructionCaches();
 		for (int i = 1; i <= instructionCache.length; i++) {
 			System.out.printf(
-					"Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.\n",
-					i, instructionCache[i - 1].getReadHits(), processor.getInstructionCacheReadHitRatio(i - 1),
-					instructionCache[i - 1].getReadMisses(), instructionCache[i - 1].getWriteHits(),
-					processor.getInstructionCacheWriteHitRatio(i - 1), instructionCache[i - 1].getWriteMisses());
+					"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.\n", i,
+					instructionCache[i - 1].getReadHits(), instructionCache[i - 1].getReadMisses(),
+					instructionCache[i - 1].getWriteHits(), instructionCache[i - 1].getWriteMisses(),
+					processor.getInstructionCacheHitRatio(i - 1));
 		}
 		
-		System.out.printf("Number of branch misspredictions: %d with percentage of %.2f%%\n", processor.getBranchesMisspredictions(), processor.getMispredictedBranchesPercentage());
+		System.out.printf("Number of branch misspredictions: %d with percentage of %.2f%%\n",
+				processor.getBranchesMisspredictions(), processor.getMispredictedBranchesPercentage());
+		
+		System.out.printf("Time spent to access memory: %d\n", processor.getTimeSpentToAccessMemory());
+		
+		System.out.printf("AMAT: %.2f\n", processor.getMemoryUnit().getAMAT());
+		System.out.printf("IPC: %.2f\n", processor.getIPC());
 	}
 	
 	public Processor getProcessor() {

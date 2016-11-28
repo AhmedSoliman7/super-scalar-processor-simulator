@@ -1,5 +1,7 @@
 package units;
 
+import java.beans.IntrospectionException;
+
 import main.ProcessorBuilder;
 
 public class ReorderBuffer {
@@ -43,10 +45,15 @@ public class ReorderBuffer {
 			
 			ReorderBufferEntry robHead = entries[head];
 			
-			InstructionType type = robHead.getInstructionType(); 
+			InstructionType type = robHead.getInstructionType();
+			if(type == InstructionType.LOAD || type == InstructionType.STORE) {
+				ProcessorBuilder.getProcessor().incrementLoadAndStoreInstructions();
+			}
+			
 			if(type == InstructionType.BEQ){
 				ProcessorBuilder.getProcessor().incrementBranchesEncountered();
 			}
+			
 			if(type == InstructionType.BEQ || type == InstructionType.JMP || type == InstructionType.RET) {
 				if(robHead.getValue() == 0){
 					if(type == InstructionType.BEQ)
@@ -64,6 +71,7 @@ public class ReorderBuffer {
 				
 				if(writingCounter == -1) {
 					writingCounter = ProcessorBuilder.getProcessor().getMemoryUnit().write(robHead.getDestination(), (short) robHead.getValue());
+					ProcessorBuilder.getProcessor().incrementTimeSpentToAccessMemory(writingCounter);
 					return;
 				}
 				
