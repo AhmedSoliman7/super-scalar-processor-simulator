@@ -86,14 +86,10 @@ public class SimulatorTests {
 		for(int i = 0; i < numCaches; i++) {
 			assertEquals(
 					String.format(
-							"Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.",
-							i + 1,
-							dataCache[i].getReadHits(),
-							simulator.getProcessor().getDataCacheReadHitRatio(i),
-							dataCache[i].getReadMisses(),
-							dataCache[i].getWriteHits(),
-							simulator.getProcessor().getDataCacheWriteHitRatio(i),
-							dataCache[i].getWriteMisses()),
+							"Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.",
+							i + 1, dataCache[i].getReadHits(), dataCache[i].getReadMisses(),
+							dataCache[i].getWriteHits(), dataCache[i].getWriteMisses(),
+							simulator.getProcessor().getDataCacheHitRatio(i)),
 					simulatorOutput.get(outputIndex++));
 		}
 		
@@ -101,14 +97,13 @@ public class SimulatorTests {
 		
 		for(int i = 0; i < numCaches; i++) {
 			assertEquals(
-					String.format("Level %d: %d read hits with hit ratio %.2f%%, %d read misses, %d write hits with hit ratio %.2f%%, %d write misses.",
+					String.format("Level %d: %d read hits, %d read misses, %d write hits, %d write misses, hit ration: %.2f%%.",
 							i + 1,
 							InstructionCache[i].getReadHits(),
-							simulator.getProcessor().getInstructionCacheReadHitRatio(i), 
 							InstructionCache[i].getReadMisses(),
 							InstructionCache[i].getWriteHits(),
-							simulator.getProcessor().getInstructionCacheWriteHitRatio(i),
-							InstructionCache[i].getWriteMisses()),
+							InstructionCache[i].getWriteMisses(),
+							simulator.getProcessor().getInstructionCacheHitRatio(i)),
 					simulatorOutput.get(outputIndex++));
 		}
 		

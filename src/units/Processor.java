@@ -4,6 +4,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import memory.Cache;
 import memory.MemoryHandler;
 import memory.ReturnPair;
 import reservation_station.ReservationStation;
@@ -290,28 +291,18 @@ public class Processor {
 		return (this.getBranchesMisspredictions() * 100.0 / this.getBranchesEncountered() * 1.0);
 	}
 	
-	public double getDataCacheReadHitRatio(int level){
-		int hits = this.memoryUnit.getDataCaches()[level].getReadHits();
-		int misses = this.memoryUnit.getDataCaches()[level].getReadMisses();
+	public double getDataCacheHitRatio(int level){
+		Cache dataCacheLevel = this.memoryUnit.getDataCaches()[level];
+		int hits = dataCacheLevel.getReadHits() + dataCacheLevel.getWriteHits();
+		int misses = dataCacheLevel.getReadMisses() + dataCacheLevel.getWriteMisses();
 		return (hits * 100.0 / (hits + misses));
 	}
 	
-	public double getDataCacheWriteHitRatio(int level){
-		int hits = this.memoryUnit.getDataCaches()[level].getWriteHits();
-		int misses = this.memoryUnit.getDataCaches()[level].getWriteMisses();
+	public double getInstructionCacheHitRatio(int level){
+		Cache instructionCacheLevel = this.memoryUnit.getInstructionCaches()[level];
+		int hits = instructionCacheLevel.getReadHits() + instructionCacheLevel.getWriteHits();
+		int misses = instructionCacheLevel.getReadMisses() + instructionCacheLevel.getWriteMisses();
 		return (hits * 100.0 / (hits + misses));
-	}
-	
-	public double getInstructionCacheReadHitRatio(int level){
-		int hits = this.memoryUnit.getInstructionCaches()[level].getReadHits();
-		int misses = this.memoryUnit.getInstructionCaches()[level].getReadMisses();
-		return (hits * 100.0 / (hits + misses));
-	}
-	
-	public double getInstructionCacheWriteHitRatio(int level){
-		int hits = this.memoryUnit.getInstructionCaches()[level].getWriteHits();
-		int misses = this.memoryUnit.getInstructionCaches()[level].getWriteMisses();
-		return (hits * 1.0 / (hits + misses)) * 100.0;
 	}
 
 }
