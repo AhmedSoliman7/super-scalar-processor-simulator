@@ -25,8 +25,14 @@ public class Processor {
 	private InstructionInFetch instructionInFetch;
 	private byte readyRegister;
 	private short readyValue;
-	private int timer;
+	private short terminatingAdress;
+	private int instructionCompleted;
+	private int branchesEncountered;
+	private int branchesMisspredictions;
+	
 
+	private int timer;
+	
 	public Processor(){
 		countReservationStation = new int[5];
 		registerFile = new RegisterFile(8, true);
@@ -47,7 +53,18 @@ public class Processor {
 	}
 
 	public void fetchInstruction() {
-		if(instructionQueue.size() == instructionQueueMaxSize) {
+		
+		if(PC == terminatingAdress && instructionInFetch != null && instructionInFetch.isReady()) {
+			instructionQueue.add(instructionInFetch.getInstruction());
+			instructionInFetch = null;
+		}
+		
+		if(PC == terminatingAdress && instructionInFetch == null) {
+			return;
+		}
+			
+		
+		if(instructionQueue.size() == instructionQueueMaxSize ) {
 			return;
 		}
 		
@@ -158,6 +175,10 @@ public class Processor {
 		this.flush();
 	}
 	
+	public boolean isTerminated(){
+		return PC == terminatingAdress && instructionQueue.isEmpty() && ROB.getCountEntries() == 0;
+	}
+	
 	private void flush() {
 		registerFile.flush();
 		ROB.flush();
@@ -233,4 +254,37 @@ public class Processor {
 	public void setReadyValue(short readyValue) {
 		this.readyValue = readyValue;
 	}
+
+	public void setTerminatingAdress(short terminatingAdress) {
+		this.terminatingAdress = terminatingAdress;
+	}
+	
+	public int getTimer() {
+		return timer;
+	}
+	
+	public int getInstructionCompleted() {
+		return instructionCompleted;
+	}
+	
+	public void incrementInstructionCompleted(){
+		instructionCompleted++;
+	}
+	
+	public int getBranchesEncountered() {
+		return branchesEncountered;
+	}
+
+	public void incrementBranchesEncountered() {
+		this.branchesEncountered++;
+	}
+	
+	public int getBranchesMisspredictions() {
+		return branchesMisspredictions;
+	}
+	
+	public void incrementBranchesMisspredictions() {
+		this.branchesMisspredictions++;
+	}
+
 }

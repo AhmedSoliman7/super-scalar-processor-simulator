@@ -30,6 +30,11 @@ public class RegisterFile {
 	}
 	
 	public void setRegisterValue(byte register, short value) {
+		if(register == 0) {
+			// prevent writing to register 0
+			return;
+		}
+		
 		if(tempRegisterFile != null) {
 			tempRegisterFile.setRegisterValue(register, value);
 			return;

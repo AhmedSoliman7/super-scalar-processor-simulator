@@ -260,7 +260,7 @@ public class InstructionsTests {
 		
 		assertEquals(
 				"Current PC shouldn't be changed yet",
-				105,
+				104,
 				processor.getPC());
 		
 		processor.runClockCycle();
@@ -366,7 +366,7 @@ public class InstructionsTests {
 		
 		assertEquals(
 				"The PC with branch not taken should be 105",
-				107,
+				104,
 				processor.getPC());
 		
 		processor.runClockCycle();

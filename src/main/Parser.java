@@ -116,6 +116,11 @@ public class Parser {
 			memoryHandler.getMainMemory().write(initialAddress++, instructionCode);
 		}
 		
+		// termination
+		if(ProcessorBuilder.processor != null) {
+			ProcessorBuilder.getProcessor().setTerminatingAdress(initialAddress);
+		}
+		
 		sc.close();
 	}
 }

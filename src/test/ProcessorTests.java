@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -382,4 +383,66 @@ public class ProcessorTests {
 
 		TestsInitializer.clean();
 	}
+	
+	@Test
+	public void testProtectingRegister0() throws FileNotFoundException {
+		ArrayList<String> program = new ArrayList<String>();
+		program.add("ADDI r0, r0, 20");
+		TestsInitializer.initGivenAssembly(program);
+		TestsInitializer.initUserInput2();
+		
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		Processor processor = ProcessorBuilder.getProcessor();
+		
+		for(int i = 0; i < 20; i++)
+			processor.runClockCycle();
+		
+		assertEquals(
+				"Register zero is protected, value was not affected.",
+				0,
+				processor.getRegisterFile().getRegisterValue((byte) 0));
+		
+		TestsInitializer.clean();
+	}
+	
+	@Test
+	public void testTerminatingProgram() throws FileNotFoundException {
+		ArrayList<String> program = new ArrayList<String>();
+		program.add("ADDI r7, r7, 50");
+		program.add("ADDI r7, r7, 57");
+		program.add("ADDI r3, r3, 4");
+		program.add("ADDI r1, r1, 1");
+		program.add("ADD r4, r1, r3");
+		program.add("JALR r6, r7");
+		program.add("JMP r4, 0");
+		program.add("BEQ r3, r0, 3");
+		program.add("ADDI r3, r3, -1");
+		program.add("MULT r1, r4, r1");
+		program.add("JMP r0 -4");
+		program.add("RET r6");
+		program.add("SW r1, r0, 15");
+		program.add("LW r5, r0, 15");
+		
+		TestsInitializer.initGivenAssembly(program);
+		TestsInitializer.initUserInput2();
+				
+		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
+		Processor processor = ProcessorBuilder.getProcessor();
+		
+		while(!processor.isTerminated())
+			processor.runClockCycle();
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				625,
+				processor.getRegisterFile().getRegisterValue((byte) 5));
+		
+		assertEquals(
+				"The result from the last ADDI in r3 should be 5.",
+				111,
+				processor.getTimer());
+		
+		TestsInitializer.clean();
+	}
+	
 }
