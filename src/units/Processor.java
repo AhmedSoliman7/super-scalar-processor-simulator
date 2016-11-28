@@ -54,12 +54,12 @@ public class Processor {
 
 	public void fetchInstruction() {
 		
-		if(PC == terminatingAdress && instructionInFetch != null && instructionInFetch.isReady()) {
+		if(PC >= terminatingAdress && instructionInFetch != null && instructionInFetch.isReady()) {
 			instructionQueue.add(instructionInFetch.getInstruction());
 			instructionInFetch = null;
 		}
 		
-		if(PC == terminatingAdress && instructionInFetch == null) {
+		if(PC >= terminatingAdress && instructionInFetch == null) {
 			return;
 		}
 			
@@ -78,7 +78,6 @@ public class Processor {
 			instructionQueue.add(instructionInFetch.getInstruction());
 		}
 		
-//		System.err.println(this.getRegisterFile().getRegisterValue((byte) 6) + " " +PC);
 		ReturnPair<Short> instructionPair = memoryUnit.fetchInstruction(PC);
 		instructionInFetch = new InstructionInFetch(instructionPair.value, PC, (short) (instructionPair.clockCycles - 1));
 		incrementPC(instructionPair.value);		
@@ -176,7 +175,7 @@ public class Processor {
 	}
 	
 	public boolean isTerminated(){
-		return PC == terminatingAdress && instructionQueue.isEmpty() && ROB.getCountEntries() == 0;
+		return PC >= terminatingAdress && instructionQueue.isEmpty() && ROB.getCountEntries() == 0 && instructionInFetch == null;
 	}
 	
 	private void flush() {
@@ -285,6 +284,34 @@ public class Processor {
 	
 	public void incrementBranchesMisspredictions() {
 		this.branchesMisspredictions++;
+	}
+	
+	public double getMispredictedBranchesPercentage() {
+		return (this.getBranchesMisspredictions() * 100.0 / this.getBranchesEncountered() * 1.0);
+	}
+	
+	public double getDataCacheReadHitRatio(int level){
+		int hits = this.memoryUnit.getDataCaches()[level].getReadHits();
+		int misses = this.memoryUnit.getDataCaches()[level].getReadMisses();
+		return (hits * 100.0 / (hits + misses));
+	}
+	
+	public double getDataCacheWriteHitRatio(int level){
+		int hits = this.memoryUnit.getDataCaches()[level].getWriteHits();
+		int misses = this.memoryUnit.getDataCaches()[level].getWriteMisses();
+		return (hits * 100.0 / (hits + misses));
+	}
+	
+	public double getInstructionCacheReadHitRatio(int level){
+		int hits = this.memoryUnit.getInstructionCaches()[level].getReadHits();
+		int misses = this.memoryUnit.getInstructionCaches()[level].getReadMisses();
+		return (hits * 100.0 / (hits + misses));
+	}
+	
+	public double getInstructionCacheWriteHitRatio(int level){
+		int hits = this.memoryUnit.getInstructionCaches()[level].getWriteHits();
+		int misses = this.memoryUnit.getInstructionCaches()[level].getWriteMisses();
+		return (hits * 1.0 / (hits + misses)) * 100.0;
 	}
 
 }

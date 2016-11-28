@@ -41,7 +41,7 @@ public class InstructionsTests {
 		ProcessorBuilder.buildProcessor(new FileInputStream(USR_FILE_NAME));
 		Processor processor = ProcessorBuilder.getProcessor();
 		
-		for(int i = 0; i < 11; i++)
+		while(!processor.isTerminated())
 			processor.runClockCycle();
 		
 		assertEquals(
